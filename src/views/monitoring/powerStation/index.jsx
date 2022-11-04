@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Card, Table, Tooltip, Drawer, Space } from 'antd'
-import { Amap, Marker } from '@amap/amap-react'
+import { Button, Card, Table, Tooltip, Drawer } from 'antd'
 import {
   BankTwoTone,
   CheckCircleOutlined,
@@ -15,25 +14,43 @@ import {
   EditOutlined,
   DeleteOutlined
 } from '@ant-design/icons'
+import FormData from './components/FormData.jsx'
+
+import { getStationList } from '../../../api/monitoring'
 import './index.less'
 // 电站列表
 export default class Power extends Component {
   state = {
+    stationList: [], // 电站列表
     current: 0,
     open: false,
     open1: false
   }
   componentDidMount() {
+    this.gitList()
     this.tabSwitch()
   }
+
+  // 获取电站列表
+  gitList = () => {
+    getStationList().then(res => {
+      // console.log(res)
+      this.setState({
+        stationList: res.data.records
+      })
+    })
+  }
+
   tabSwitch = (current = 0) => {
     this.setState({ current })
   }
   showDrawer = () => {
     this.setState({ open: true })
   }
-  onClose = () => {
-    this.setState({ open: false })
+  closeDrawer = (status) => {
+    this.setState({
+      open: status
+    })
   }
   showDrawer1 = () => {
     const { open1 } = this.state
@@ -41,13 +58,13 @@ export default class Power extends Component {
   }
 
   render() {
-    const { current, open, open1 } = this.state
+    const { stationList, current, open, open1 } = this.state
     const columns = [
       {
         title: '电站名称',
         width: 200,
-        dataIndex: 'name',
-        key: 'name',
+        dataIndex: 'stationName',
+        key: 'stationName',
         fixed: 'left'
       },
       {
@@ -133,7 +150,6 @@ export default class Power extends Component {
         )
       }
     ]
-    const data = []
     return (
       <div className='power'>
         <div className='top'>
@@ -196,47 +212,10 @@ export default class Power extends Component {
           >
           </Drawer>
           {
-            current === 0 ? <Table columns={columns} dataSource={data} /> : current === 1 ? '通讯正常' : current === 2 ? '全部离线' : current === 3 ? '部分离线' : current === 4 ? '无报警' : current === 5 ? '有报警' : '未接入'
+            current === 0 ? <Table rowKey='id' columns={columns} dataSource={stationList} /> : current === 1 ? '通讯正常' : current === 2 ? '全部离线' : current === 3 ? '部分离线' : current === 4 ? '无报警' : current === 5 ? '有报警' : '未接入'
           }
-
         </Card>
-
-        <Drawer
-          title="创建电站"
-          placement='right'
-          width='70%'
-          headerStyle={{ backgroundColor: '#FFF' }}
-          drawerStyle={{ backgroundColor: '#F2F2F2' }}
-          closable={false}
-          keyboard={false}
-          maskClosable={false}
-          mask={false}
-          open={open}
-          extra={
-            <Space>
-              <Button onClick={this.onClose}>取消</Button>
-              <Button type="primary">创建</Button>
-            </Space>
-          }
-        >
-          <Card style={{ marginBottom: 5 }}>
-            <div style={{ fontSize: 16 }}>基础信息</div>
-            <div style={{ height: 256 }}>
-              <Amap>
-                <Marker />
-              </Amap>
-            </div>
-          </Card>
-          <Card>
-            <div style={{ fontSize: 16 }}>系统信息</div>
-          </Card>
-          <Card style={{ margin: '5px 0' }}>
-            <div style={{ fontSize: 16 }}>收益信息</div>
-          </Card>
-          <Card>
-            <div style={{ fontSize: 16 }}>业主信息</div>
-          </Card>
-        </Drawer>
+        <FormData open={open} closeDrawer={this.closeDrawer} />
       </div >
     )
   }

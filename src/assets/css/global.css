@@ -38,3 +38,10 @@ body,
   padding-bottom: 5px;
   cursor: pointer;
 }
+.mtb5 {
+  margin: 5px 0;
+  color: #1890FF;
+}
+.ant-table-tbody .ant-table-row .ant-table-cell{
+  padding: 2px 0 2px 16px;
+}
