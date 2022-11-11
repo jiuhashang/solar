@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Route, Switch } from 'react-router-dom'
+import { Route, Switch, Redirect } from 'react-router-dom'
 import { config as AmapReactConfig } from '@amap/amap-react'
 import './assets/css/global.css'
 import './App.css'
 
-import Login from './views/login'
+import Station from './views/station'
+// import Login from './views/login'
 import Home from './views/home'
 
 AmapReactConfig.version = '2.0'
@@ -17,8 +18,9 @@ export default class App extends Component {
   render() {
     return (
       <Switch>
-        <Route path='/' component={Home} />
-        <Route path='/login' component={Login} />
+        <Route path='/home' component={Home} />
+        <Route path='/station' component={Station} />
+        <Redirect to='home' />
       </Switch>
     )
   }

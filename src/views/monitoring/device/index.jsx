@@ -20,7 +20,7 @@ export default class Device extends Component {
     const { current } = this.state
     return (
       <div className='device'>
-        <div style={{ fontSize: 18 }}>设备列表</div>
+        <div style={{ fontSize: 18, fontWeight: 'bold' }}>设备列表</div>
         <Card style={{ marginTop: 20, fontSize: 12 }} size='small'>
           <div style={{ padding: '10px 15px', display: 'flex', justifyContent: 'space-between' }}>
             <div>

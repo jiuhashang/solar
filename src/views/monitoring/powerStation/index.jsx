@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import { Button, Card, Table, Tooltip, Drawer } from 'antd'
 import {
   BankTwoTone,
@@ -63,9 +64,10 @@ export default class Power extends Component {
       {
         title: '电站名称',
         width: 200,
-        dataIndex: 'stationName',
-        key: 'stationName',
-        fixed: 'left'
+        fixed: 'left',
+        render: (row) => (
+          <Link to={`/station/dashboard?stationId=${row.id}`} target='_blank'>{row.stationName}</Link>
+        )
       },
       {
         title: '通讯',
@@ -154,7 +156,7 @@ export default class Power extends Component {
       <div className='power'>
         <div className='top'>
           <div>
-            <span style={{ fontSize: 18 }}>电站列表</span>
+            <span style={{ fontSize: 18, fontWeight: 'bold' }}>电站列表</span>
             <UnorderedListOutlined style={{ fontSize: 14, padding: '0 10px 0 30px' }} />
             <EnvironmentOutlined style={{ fontSize: 14 }} />
           </div>

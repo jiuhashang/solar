@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-// import './index.less'
 import { Col, Row } from 'antd'
 import './index.less'
 

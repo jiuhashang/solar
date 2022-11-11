@@ -12,7 +12,7 @@ export default class Dashboard extends Component {
   render() {
     return (
       <div className='dashboard'>
-        <h2>数据看板</h2>
+        <div style={{ fontSize: 18, marginBottom: 16 , fontWeight: 'bold' }}>数据看板</div>
         <Row gutter={[10, 10]}>
           <Col span={12}>
             <Card style={{ height: 340 }}>

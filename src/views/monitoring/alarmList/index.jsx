@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
-import { Card, Table, Drawer } from 'antd'
+import { Card, Table, Drawer, Button, Tooltip } from 'antd'
+import {
+  EditOutlined,
+  DeleteOutlined
+} from '@ant-design/icons'
 import {
   CaretDownOutlined,
   SyncOutlined
@@ -26,12 +30,40 @@ export default class Alarm extends Component {
 
     const columns = [
       {
+        title: '告警描述',
+        width: 200,
+        fixed: 'left',
+        dataIndex: 'a',
+        key: 'a'
+      },
+      {
+        title: '状态',
+        dataIndex: 'b',
+        key: 'b'
+      },
+      {
         title: '等级',
         dataIndex: 'name',
         key: 'name'
       },
       {
-        title: '开始时间',
+        title: '电站',
+        dataIndex: 'c',
+        width: 200,
+        key: 'c'
+      },
+      {
+        title: '告警类型',
+        dataIndex: 'd',
+        key: 'd'
+      },
+      {
+        title: '设备',
+        dataIndex: 'e',
+        key: 'e'
+      },
+      {
+        title: '告警开始时间',
         dataIndex: 'age',
         key: 'age'
       },
@@ -46,20 +78,31 @@ export default class Alarm extends Component {
         key: '2'
       },
       {
-        title: '警告说明',
-        dataIndex: 'address',
-        key: '3'
-      },
-      {
-        title: '状态',
-        dataIndex: 'address',
-        key: '4'
+        title: '操作',
+        key: 'operation',
+        fixed: 'right',
+        width: 100,
+        render: () => (
+          <>
+            <Tooltip title="编辑" color='black'>
+              <EditOutlined style={{ padding: '0 10px', cursor: 'pointer' }} />
+            </Tooltip>
+            <Tooltip title="删除" color='black'>
+              <DeleteOutlined style={{ cursor: 'pointer' }} />
+            </Tooltip>
+          </>
+        )
       }
     ]
     const data = []
     return (
       <div className='alarm'>
-        <div style={{ fontSize: 18 }}>报警列表</div>
+        <div className='title'>
+          <div style={{ fontSize: 18, fontWeight: 'bold' }}>告警列表</div>
+          <div>
+            <Button type="primary">告警推送设置</Button>
+          </div>
+        </div>
         <Card style={{ marginTop: 20 }} size='small'>
           <div style={{ padding: '0 15px', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
             <div>

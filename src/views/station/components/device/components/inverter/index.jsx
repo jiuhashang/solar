@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons'
 import Chart from '../../components/chart'
 
-import { getDeviceList, getDeviceDetail } from '../../../../../api/monitoring'
+import { getDeviceList, getDeviceDetail } from '../../../../../../api/monitoring'
 
 export default class Inverter extends Component {
   componentDidMount() {
@@ -20,6 +20,7 @@ export default class Inverter extends Component {
     dCurrent: 0,
     id: undefined,
     deviceForm: {
+      stationId: undefined,
       deviceType: 0,
       pageIndex: 1,
       pageSize: 10
@@ -62,7 +63,9 @@ export default class Inverter extends Component {
   }
   // 获取逆变器列表
   getDeviceList = (pageIndex=1, pageSize=10) => {
+    const stationId = window.sessionStorage.getItem('stationId')
     const deviceForm = {
+      stationId,
       deviceType: 0,
       pageIndex,
       pageSize

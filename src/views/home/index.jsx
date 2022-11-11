@@ -33,17 +33,17 @@ export default class Home extends Component {
           </Sider>
           <Content style={{height: '100%', overflow: 'auto'}}>
             <Switch>
-              <Route path='/dashboard' component={Dashboard} />
-              <Route path='/power' component={Power} />
-              <Route path='/device' component={Device} />
-              <Route path='/alarm' component={Alarm} />
-              <Route path='/report' component={Report} />
-              <Route path='/contrast' component={Contrast} />
-              <Route path='/record' component={Record} />
-              <Route path='/account' component={Account} />
-              <Route path='/permission' component={Permission} />
-              <Route path='/push' component={Push} />
-              <Redirect to='/dashboard' />
+              <Route path='/home/dashboard' component={Dashboard} />
+              <Route path='/home/device' component={Device} />
+              <Route path='/home/power' component={Power} />
+              <Route path='/home/alarm' component={Alarm} />
+              <Route path='/home/report' component={Report} />
+              <Route path='/home/contrast' component={Contrast} />
+              <Route path='/home/record' component={Record} />
+              <Route path='/home/account' component={Account} />
+              <Route path='/home/permission' component={Permission} />
+              <Route path='/home/push' component={Push} />
+              <Redirect to='/home/dashboard' />
             </Switch>
           </Content>
         </Layout>
