@@ -1,76 +1,131 @@
-import React, { Component } from 'react'
-import { Card, Table, Drawer, Button, Tooltip } from 'antd'
+// 报警列表
 import {
   EditOutlined,
-  DeleteOutlined
-} from '@ant-design/icons'
-import {
+  DeleteOutlined,
   CaretDownOutlined,
   SyncOutlined
 } from '@ant-design/icons'
+import React, { Component } from 'react'
+import { Card, Table, Drawer, Button, Tooltip, Row, Col, Divider, DatePicker } from 'antd'
+
+import { getWornList } from '../../../api/monitoring'
 import './index.less'
-// 报警列表
+
+const { RangePicker } = DatePicker
 export default class Alarm extends Component {
   componentDidMount() {
-    this.tabSwitch()
+    this.getList()
   }
   state = {
-    current: 0,
-    open: false
+    open: false,
+    current: 1,
+    stationId: undefined,
+    deviceSn: undefined,
+    level: undefined,
+    status: 0,
+    startTime: undefined,
+    endTime: undefined,
+    pageIndex: 1,
+    pageSize: 10,
+
+    data: []
   }
-  tabSwitch = (current = 0) => {
-    this.setState({ current })
+  getList = () => {
+    const { stationId, deviceSn, level, status, startTime, endTime, pageIndex, pageSize } = this.state
+    const obj = {
+      stationId, deviceSn, level, status, startTime, endTime, pageIndex, pageSize
+    }
+    getWornList(obj).then(res => {
+      this.setState({
+        data: res.data.records
+      })
+    })
+  }
+  tabSwitch = (current = 1) => {
+    if(current === 0) {
+      this.setState({
+        current,
+        status: undefined
+      }, () => {
+        this.getList()
+      })
+    } else if(current === 1) {
+      this.setState({
+        current,
+        status: 0
+      }, () => {
+        this.getList()
+      })
+    } else if(current === 2) {
+      this.setState({
+        current,
+        status: 1
+      }, () => {
+        this.getList()
+      })
+    }
   }
   showDrawer = () => {
     const { open } = this.state
     this.setState({ open: !open })
   }
+  onClose = () => {
+    this.setState({
+      open: false
+    })
+  }
   render() {
-    const { current, open } = this.state
+    const { current, open, data } = this.state
 
     const columns = [
       {
         title: '告警描述',
         width: 200,
         fixed: 'left',
-        dataIndex: 'a',
-        key: 'a'
+        dataIndex: 'wornName',
+        key: 'wornName'
       },
       {
         title: '状态',
-        dataIndex: 'b',
-        key: 'b'
+        render: (row) => (
+          row.status === 0 ? <span>发生中</span> : <span>已恢复</span>
+        )
       },
       {
         title: '等级',
-        dataIndex: 'name',
-        key: 'name'
+        render: (row) => (
+          row.level === 0 ? <Button type="primary" size='small'>提示</Button> : row.level === 1 ? <Button style={{ backgroundColor: '#F59A23', color: '#fff', border: 'none' }} size='small'>警告</Button> : <Button type="danger" size='small'>故障</Button> 
+        )
       },
       {
         title: '电站',
-        dataIndex: 'c',
+        dataIndex: 'stationName',
         width: 200,
-        key: 'c'
+        key: 'stationName'
       },
       {
         title: '告警类型',
-        dataIndex: 'd',
-        key: 'd'
+        dataIndex: 'type',
+        key: 'type'
       },
       {
         title: '设备',
-        dataIndex: 'e',
-        key: 'e'
+        render: (row) => (
+            <>
+              <div>{row.deviceName}</div>
+              <div>{row.deviceSn}</div>
+            </>
+          )
       },
       {
         title: '告警开始时间',
-        dataIndex: 'age',
-        key: 'age'
+        dataIndex: 'createTime',
+        key: 'createTime'
       },
       {
         title: '恢复时间',
-        dataIndex: 'address',
-        key: '1'
+        dataIndex: 'returnTime',
+        key: 'returnTime'
       },
       {
         title: '持续时间(min)',
@@ -79,7 +134,6 @@ export default class Alarm extends Component {
       },
       {
         title: '操作',
-        key: 'operation',
         fixed: 'right',
         width: 100,
         render: () => (
@@ -94,7 +148,6 @@ export default class Alarm extends Component {
         )
       }
     ]
-    const data = []
     return (
       <div className='alarm'>
         <div className='title'>
@@ -103,6 +156,7 @@ export default class Alarm extends Component {
             <Button type="primary">告警推送设置</Button>
           </div>
         </div>
+
         <Card style={{ marginTop: 20 }} size='small'>
           <div style={{ padding: '0 15px', fontSize: 12, display: 'flex', justifyContent: 'space-between' }}>
             <div>
@@ -117,16 +171,39 @@ export default class Alarm extends Component {
             </div>
           </div>
         </Card>
+
         <Card id='drawer' className='site-drawer-render-in-current-wrapper'>
-          { current === 0 ? <Table columns={columns} dataSource={data} /> : current === 1 ? '发生中' : '已恢复' }
+          <Table columns={columns} dataSource={data} rowKey='id' />
           <Drawer
             headerStyle={{ display: 'none' }}
             placement="top"
             closable={false}
+            maskClosable={true}
             open={open}
             getContainer={document.getElementById('drawer')}
             style={{ position: 'absolute' }}
+            height='240px'
+            onClose={this.onClose}
           >
+            <Row gutter={20}>
+              <Col span={2}>等级</Col>
+              <Col>
+                <span className='nocur'>提示</span>
+                <span className='nocur' style={{ margin: '0 20px' }}>告警</span>
+                <span className='nocur'>故障</span>
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={20}>
+              <Col span={2}>开始时间</Col>
+              <Col>
+                <RangePicker />
+              </Col>
+            </Row>
+            <Divider />
+            <Button style={{ marginLeft: 136 }} onClick={this.onClose}>取消</Button>
+            <Button style={{ margin: '0 20px' }}>重置</Button>
+            <Button type='primary'>确 定</Button>
           </Drawer>
         </Card>
       </div>

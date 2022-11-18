@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Row, Col, Card } from 'antd'
 import qs from 'qs' 
 import { getStationById, getStationCount } from '../../../../api/station'
+import Info from './info'
 import Count from './count'
 import Chart from './chart'
 
@@ -64,15 +65,13 @@ export default class Dashboard extends Component {
         <div className='content'>
           <Row gutter={20}>
             <Col span={8}>
-              <div className='info'></div>
+              <Info locationAddress={details.locationAddress} stationType={details.stationType} systemType={details.systemType} platformType={details.platformType} />
             </Col>
             <Col span={16}>
               <Count electricity={electricity} />
             </Col>
           </Row>
-
           <Chart stationId={this.stationId} />
-          
           <Row gutter={20}>
             <Col span={12}>
               <Card className='bl'>

@@ -52,3 +52,12 @@ export function getDeviceView(params) {
     params
   })
 }
+
+// 获取报警列表
+export function getWornList(params) {
+  return request({
+    url: '/xzyw/ywStationDeviceWornLog/getList',
+    method: 'get',
+    params
+  })
+}

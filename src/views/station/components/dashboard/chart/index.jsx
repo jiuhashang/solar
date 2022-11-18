@@ -21,8 +21,15 @@ export default class Chart extends Component {
   
   componentDidMount() {
     this.getChart()
+    this.t1 = setInterval(() => {
+      this.getChart()
+    }, 5*60*1000)
     this.initChart() 
   }
+  componentWillUnmount() {
+    clearInterval(this.t1)
+  }
+  
   initChart = () => {
     this.myChart = echarts.init(document.getElementById('c1'))
     var option = {
