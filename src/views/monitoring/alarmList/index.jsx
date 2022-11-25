@@ -27,20 +27,19 @@ export default class Alarm extends Component {
     endTime: undefined,
     pageIndex: 1,
     pageSize: 10,
-
+    keyValue: '',
     data: []
   }
   getList = () => {
     const { stationId, deviceSn, level, status, startTime, endTime, pageIndex, pageSize } = this.state
-    const obj = {
-      stationId, deviceSn, level, status, startTime, endTime, pageIndex, pageSize
-    }
+    const obj = { stationId, deviceSn, level, status, startTime, endTime, pageIndex, pageSize }
     getWornList(obj).then(res => {
       this.setState({
         data: res.data.records
       })
     })
   }
+  // 全部 发生中 已恢复 切换
   tabSwitch = (current = 1) => {
     if(current === 0) {
       this.setState({
@@ -65,17 +64,50 @@ export default class Alarm extends Component {
       })
     }
   }
+
+  // 报警等级 切换
+  tab = (level) => {
+    this.setState({ level })
+  } 
+  // 搜索开始时间 
+  timeChange = (date, dateString) => {
+    this.setState({
+      startTime: dateString[0],
+      endTime: dateString[1]
+    })
+  }
+  
   showDrawer = () => {
     const { open } = this.state
     this.setState({ open: !open })
   }
+  
+  reset = () => {
+    this.setState({
+      keyValue: new Date(),
+      level: undefined,
+      startTime: undefined,
+      endTime: undefined
+    })
+  }
+  
   onClose = () => {
     this.setState({
+      keyValue: new Date(),
+      level: undefined,
+      startTime: undefined,
+      endTime: undefined,
       open: false
     })
   }
+
+  search = () => {
+    this.getList()
+    this.showDrawer()
+  }
+  
   render() {
-    const { current, open, data } = this.state
+    const { current, level, open, data, keyValue } = this.state
 
     const columns = [
       {
@@ -87,12 +119,14 @@ export default class Alarm extends Component {
       },
       {
         title: '状态',
+        width: 100,
         render: (row) => (
           row.status === 0 ? <span>发生中</span> : <span>已恢复</span>
         )
       },
       {
         title: '等级',
+        width: 100,
         render: (row) => (
           row.level === 0 ? <Button type="primary" size='small'>提示</Button> : row.level === 1 ? <Button style={{ backgroundColor: '#F59A23', color: '#fff', border: 'none' }} size='small'>警告</Button> : <Button type="danger" size='small'>故障</Button> 
         )
@@ -100,16 +134,17 @@ export default class Alarm extends Component {
       {
         title: '电站',
         dataIndex: 'stationName',
-        width: 200,
-        key: 'stationName'
+        width: 300,
+        ellipsis: true,
       },
       {
         title: '告警类型',
         dataIndex: 'type',
-        key: 'type'
+        width: 100
       },
       {
         title: '设备',
+        width: 180,
         render: (row) => (
             <>
               <div>{row.deviceName}</div>
@@ -120,17 +155,17 @@ export default class Alarm extends Component {
       {
         title: '告警开始时间',
         dataIndex: 'createTime',
-        key: 'createTime'
+        width: 200
       },
       {
         title: '恢复时间',
         dataIndex: 'returnTime',
-        key: 'returnTime'
+        width: 200
       },
       {
         title: '持续时间(min)',
         dataIndex: 'address',
-        key: '2'
+        width: 200
       },
       {
         title: '操作',
@@ -173,7 +208,7 @@ export default class Alarm extends Component {
         </Card>
 
         <Card id='drawer' className='site-drawer-render-in-current-wrapper'>
-          <Table columns={columns} dataSource={data} rowKey='id' />
+          <Table columns={columns} dataSource={data} rowKey='id' scroll={{ x: 1500 }} />
           <Drawer
             headerStyle={{ display: 'none' }}
             placement="top"
@@ -188,22 +223,22 @@ export default class Alarm extends Component {
             <Row gutter={20}>
               <Col span={2}>等级</Col>
               <Col>
-                <span className='nocur'>提示</span>
-                <span className='nocur' style={{ margin: '0 20px' }}>告警</span>
-                <span className='nocur'>故障</span>
+                <span style={{color: level === 0 ? '#1890FF' : ''}} className='nocur' onClick={() => this.tab(0)}>提示</span>
+                <span style={{color: level === 1 ? '#1890FF' : '', margin: '0 20px'}} className='nocur' onClick={() => this.tab(1)}>警告</span>
+                <span style={{color: level === 2 ? '#1890FF' : ''}} className='nocur' onClick={() => this.tab(2)}>故障</span>
               </Col>
             </Row>
             <Divider />
             <Row gutter={20}>
               <Col span={2}>开始时间</Col>
               <Col>
-                <RangePicker />
+                <RangePicker onChange={this.timeChange} key={keyValue} />
               </Col>
             </Row>
             <Divider />
             <Button style={{ marginLeft: 136 }} onClick={this.onClose}>取消</Button>
-            <Button style={{ margin: '0 20px' }}>重置</Button>
-            <Button type='primary'>确 定</Button>
+            <Button style={{ margin: '0 20px' }} onClick={this.reset}>重置</Button>
+            <Button type='primary' onClick={this.search}>确 定</Button>
           </Drawer>
         </Card>
       </div>

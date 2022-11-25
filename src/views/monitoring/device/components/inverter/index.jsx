@@ -247,7 +247,7 @@ export default class Inverter extends Component {
       },
       {
         title: '状态',
-        width: 120,
+        width: 100,
         render: val =>  
           val.status === 0 ?
           <MinusCircleOutlined style={{ color: '#8C8C8C' }} />: val.status === 1 ? 
@@ -262,13 +262,13 @@ export default class Inverter extends Component {
         render: val => val.power/1000
       },
       {
-        title: '当日发电量(kWh)',
+        title: '当日发电量 (kWh)',
         dataIndex: 'dayElectricity',
         key: 'dayElectricity',
         width: 150,
       },
       {
-        title: '当日满发小时(h)',
+        title: '当日满发小时 (h)',
         dataIndex: 'electricityHour',
         key: 'electricityHour',
         width: 150,
@@ -289,7 +289,8 @@ export default class Inverter extends Component {
         title: '所属电站',
         dataIndex: 'stationName',
         key: 'stationName',
-        width: 220,
+        width: 300,
+        ellipsis: true
       },
       // {
       //   title: '所属父设备',
@@ -307,7 +308,7 @@ export default class Inverter extends Component {
         title: '最新更新时间',
         dataIndex: 'updateTime',
         key: 'updateTime',
-        width: 150
+        width: 160
       },
       {
         title: '操作',
@@ -327,7 +328,7 @@ export default class Inverter extends Component {
     ]
     return (
       <>
-        <Table columns={columns} rowKey={(record) => record.id} dataSource={inverter}
+        <Table columns={columns} rowKey={(record) => record.id} dataSource={inverter} scroll={{ x: 1500 }} 
           pagination={{
             defaultCurrent: 1, // 默认当前页数
             defaultPageSize: 10, // 默认当前页显示数据的大小

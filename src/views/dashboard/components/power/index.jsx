@@ -1,39 +1,44 @@
 import React, { Component } from 'react'
 // import './index.less'
 import { Table, Progress } from 'antd'
+import { getStationList } from '../../../../api/monitoring'
 
-const columns = [
-  {
-    width: '25%',
-    title: '电站名称',
-    dataIndex: 'name',
-    key: 'name',
-    ellipsis: true,
-    className: 'fs12'
-  },
-  {
-    width: '65%',
-    title: '电站地址',
-    dataIndex: 'address',
-    key: 'address',
-    className: 'fs12',
-    render: () => <Progress percent={30} />
-  }
-]
-const data = [
-  {
-    key: '1',
-    name: '浙江省杭州市上城区西子智慧产业园上的那时的你爱上帝爱上帝哈师大是',
-    address: '浙江省-杭州市'
-  }
-]
 export default class Power extends Component {
+  state = {
+    list: []
+  }
+  componentDidMount() {
+    this.getList()
+  }
+
+  getList = () => {
+    getStationList({ orderType: 2 }).then(res => {
+      this.setState({
+        list: res.data.records
+      })
+    })
+  }
   render() {
+    const columns = [
+      {
+        width: '40%',
+        title: '电站名称',
+        dataIndex: 'stationName',
+        ellipsis: true
+      },
+      {
+        width: '60%',
+        title: '功率归一化',
+        dataIndex: 'powerInOne',
+        render: (powerInOne) => <Progress percent={(powerInOne * 100).toFixed(2)} />
+      }
+    ]
+    const { list } = this.state
     return (
       <div className='hour'>
         <div className="top" style={{fontSize: 14, color: '#000'}}>功率归一化排名</div>
         <div className="bottom">
-          <Table columns={columns} dataSource={data} pagination={false} showHeader={false} bordered={false} />
+          <Table rowKey='id' columns={columns} dataSource={list} pagination={false} />
         </div>
       </div>
     )

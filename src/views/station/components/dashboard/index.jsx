@@ -31,6 +31,7 @@ export default class Dashboard extends Component {
   // 获取实时发电数据
   getStationCount = ( stationId ) => {
     getStationCount({ stationId }).then(res => {
+      // console.log(res)
       this.setState({
         electricity: res.data
       })

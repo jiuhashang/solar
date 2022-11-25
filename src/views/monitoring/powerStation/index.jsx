@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Card, Table, Tooltip, Drawer } from 'antd'
+import { Button, Card, Table, Tooltip, Drawer, Row, Col, Divider, Cascader, Input } from 'antd'
 import {
   BankTwoTone,
   CheckCircleOutlined,
@@ -13,37 +13,145 @@ import {
   UnorderedListOutlined,
   EnvironmentOutlined,
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons'
-import FormData from './components/FormData.jsx'
+import AddStation from './components/AddStation.jsx'
 
-import { getStationList } from '../../../api/monitoring'
+import { getStationList, getCityList } from '../../../api/monitoring'
+import { getDeviceStatusNum } from '../../../api'
 import './index.less'
 // 电站列表
 export default class Power extends Component {
   state = {
-    stationList: [], // 电站列表
+    allConnectionOut: 0, // 全部离线
+    connectionIn: 0, // 通讯正常
+    joinIn: 0, // 未接入
+    noWorn: 0, // 无报警
+    partConnectionOut: 0, // 部分离线
+    partWorn: 0, // 有报警
+    totalNum: 0, // 电站总数
+
+    
+    connectionStatus: undefined, // 通讯
+    wornStatus: undefined, // 报警
+    joinStatus: undefined, // 接入
+    provinceId: undefined,
+    cityId: undefined,
+    areaId: undefined,
+    list: [], // 电站列表
     current: 0,
     open: false,
-    open1: false
+    open1: false, 
+    options: [], // 省市区
   }
   componentDidMount() {
     this.gitList()
-    this.tabSwitch()
+    this.getDeviceStatusNum()
   }
 
   // 获取电站列表
   gitList = () => {
-    getStationList().then(res => {
+    const { connectionStatus, wornStatus, joinStatus } = this.state
+    const obj = { connectionStatus, wornStatus, joinStatus }
+    getStationList(obj).then(res => {
       // console.log(res)
       this.setState({
-        stationList: res.data.records
+        list: res.data.records
       })
     })
   }
-
+  // 获取电站数量
+  getDeviceStatusNum = () => {
+    getDeviceStatusNum().then(res => {
+      // console.log(res);
+      const { allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum } = res.data
+      this.setState({ allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum })
+    })
+  }
   tabSwitch = (current = 0) => {
-    this.setState({ current })
+    if (current === 0) {
+      this.setState({
+        current,
+        connectionStatus: undefined,
+        wornStatus: undefined,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 1) {
+      this.setState({
+        current,
+        connectionStatus: 0,
+        wornStatus: undefined,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 2) {
+      this.setState({
+        current,
+        connectionStatus: 2,
+        wornStatus: undefined,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 3) {
+      this.setState({
+        current,
+        connectionStatus: 1,
+        wornStatus: undefined,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 4) {
+      this.setState({
+        current,
+        connectionStatus: undefined,
+        wornStatus: 0,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 5) {
+      this.setState({
+        current,
+        connectionStatus: undefined,
+        wornStatus: 1,
+        joinStatus: undefined
+      }, () => { this.gitList() })
+    } else if (current === 6) {
+      this.setState({
+        current,
+        connectionStatus: undefined,
+        wornStatus: undefined,
+        joinStatus: 0
+      }, () => { this.gitList() })
+    }
+  }
+  // 获取 省市区
+  getCity = (data) => {
+    let arr = []
+    let obj = {}
+    data.forEach(item => {
+      if (item.ywCityInfoList) {
+        item.ywCityInfoList = this.getCity(item.ywCityInfoList)
+      }	
+      obj = {
+        value: item.id,
+        label: item.cityName,
+        children: item.ywCityInfoList
+      }					
+	    arr.push(obj)
+    })
+	  return arr
+  }
+  getCities = () => {
+    getCityList().then(res => {
+      const options = this.getCity(res.data)
+      this.setState({
+        options
+      })
+    })
+  }
+  areaChange = (value) => {
+    this.setState({
+      provinceId: value[0], // 省
+      cityId: value[1], // 市
+      areaId: value[2], // 区
+    })
   }
   showDrawer = () => {
     this.setState({ open: true })
@@ -54,90 +162,90 @@ export default class Power extends Component {
     })
   }
   showDrawer1 = () => {
+    this.getCities()
     const { open1 } = this.state
     this.setState({ open1: !open1 })
   }
 
+  onClose = () => {}
+  reset = () => {}
+  search = () => {}
+  
   render() {
-    const { stationList, current, open, open1 } = this.state
+    const { allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum, list, current, open, open1, options } = this.state
     const columns = [
       {
         title: '电站名称',
-        width: 200,
+        width: 300,
         fixed: 'left',
+        ellipsis: true,
         render: (row) => (
           <Link to={`/station/dashboard?stationId=${row.id}`} target='_blank'>{row.stationName}</Link>
         )
       },
       {
         title: '通讯',
-        width: 100,
-        dataIndex: 'age',
-        key: 'age'
+        width: 60,
+        dataIndex: 'connectStatus',
+        render: connectStatus => connectStatus === 0 ? <CheckCircleOutlined style={{ color: '#41D068' }} /> : <ExclamationCircleOutlined style={{ color: '#F8B51E' }} />
       },
       {
         title: '报警',
-        dataIndex: 'address',
-        key: '1',
-        width: 150,
+        dataIndex: 'wornStatus',
+        width: 60,
+        render: wornStatus => wornStatus === 0 ? <CheckCircleOutlined style={{ color: '#41D068' }} /> : <CloseCircleOutlined style={{ color: 'red' }} />
       },
       {
-        title: '装机容量',
-        dataIndex: 'address',
-        key: '2',
-        width: 150,
+        title: '装机容量 (kWp)',
+        dataIndex: 'installedCapacity',
+        width: 120,
+        render: installedCapacity => installedCapacity / 1000
       },
       {
-        title: '发电功率',
-        dataIndex: 'address',
-        key: '3',
-        width: 150,
+        title: '发电功率 (kW)',
+        dataIndex: 'electricPower',
+        width: 120,
+        render: electricPower => (electricPower / 1000).toFixed(2)
       },
       {
-        title: '功率归一化',
-        dataIndex: 'address',
-        key: '4',
-        width: 150,
+        title: '功率归一化 (%)',
+        dataIndex: 'powerInOne',
+        width: 120,
+        render: powerInOne => (powerInOne * 100).toFixed(2)
       },
       {
-        title: '当日发电量',
-        dataIndex: 'address',
-        key: '5',
-        width: 150,
+        title: '当日发电量 (kWh)',
+        dataIndex: 'dateElectric',
+        width: 130
       },
       {
-        title: '当日满发小时',
-        dataIndex: 'address',
-        key: '6',
-        width: 150,
+        title: '当日满发小时 (h)',
+        dataIndex: 'electricHour',
+        width: 130      
       },
       {
         title: '最新发生报警',
         dataIndex: 'address',
-        key: '7',
-        width: 150,
+        width: 160
       },
       {
         title: '最新更新时间',
-        dataIndex: 'address',
-        key: '8',
-        width: 150
+        dataIndex: 'updateTime',
+        width: 160
       },
       {
         title: '更新日期',
-        dataIndex: 'address',
-        key: '9',
-        width: 150
+        dataIndex: 'updateTime',
+        width: 180
       },
       {
         title: '电站状态',
-        dataIndex: 'address',
-        key: '10',
-        width: 150
+        dataIndex: 'gridConnectionTime',
+        width: 100,
+        render: gridConnectionTime => gridConnectionTime ? '已并网' : '未并网'
       },
       {
         title: '操作',
-        key: 'operation',
         fixed: 'right',
         width: 100,
         render: () => (
@@ -169,31 +277,31 @@ export default class Power extends Component {
             <div>
               <span onClick={() => this.tabSwitch(0)} className={current === 0 ? 'cur' : 'nocur'}>
                 <BankTwoTone />&nbsp;
-                电站总数
+                电站总数 ({totalNum})
               </span>
               <span onClick={() => this.tabSwitch(1)} className={current === 1 ? 'cur' : 'nocur'} style={{ margin: '0 20px' }}>
                 <CheckCircleOutlined style={{ color: '#70B603' }} />&nbsp;
-                通讯正常
+                通讯正常 ({connectionIn})
               </span>
               <span onClick={() => this.tabSwitch(2)} className={current === 2 ? 'cur' : 'nocur'}>
                 <MinusCircleOutlined style={{ color: '#8400FF' }} />&nbsp;
-                全部离线
+                全部离线 ({allConnectionOut})
               </span>
               <span onClick={() => this.tabSwitch(3)} className={current === 3 ? 'cur' : 'nocur'} style={{ margin: '0 20px' }}>
                 <ExclamationCircleOutlined style={{ color: '#F59A23' }} />&nbsp;
-                部分离线
+                部分离线 ({partConnectionOut})
               </span>
               <span onClick={() => this.tabSwitch(4)} className={current === 4 ? 'cur' : 'nocur'}>
                 <CheckCircleOutlined style={{ color: '#70B603' }} />&nbsp;
-                无报警
+                无报警 ({noWorn})
               </span>
               <span onClick={() => this.tabSwitch(5)} className={current === 5 ? 'cur' : 'nocur'} style={{ margin: '0 20px' }}>
                 <WarningOutlined style={{ color: '#D9001B' }} />&nbsp;
-                有报警
+                有报警 ({partWorn})
               </span>
               <span onClick={() => this.tabSwitch(6)} className={current === 6 ? 'cur' : 'nocur'}>
                 <StopOutlined style={{ color: '#7F7F7F' }} />&nbsp;
-                未接入
+                未接入 ({joinIn})
               </span>
             </div>
             <div>
@@ -212,12 +320,46 @@ export default class Power extends Component {
             getContainer={document.getElementById('drawerRef')}
             style={{ position: 'absolute' }}
           >
+            <Row gutter={20}>
+              <Col span={2}>电站区域</Col>
+              <Col>
+                <Cascader options={options} onChange={this.areaChange} />
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={20}>
+              <Col span={2}>装机容量</Col>
+              <Col style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Input /> ~ <Input />
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={20}>
+              <Col span={2}>电站类型</Col>
+              <Col>
+                <span style={{marginRight: 20}}>分布式户用</span>
+                <span>分布式商业</span>
+                <span style={{margin: '0 20px'}}>分布式工业</span>
+                <span>地面电站</span>
+              </Col>
+            </Row>
+            <Divider />
+            <Row gutter={20}>
+              <Col span={2}>系统类型</Col>
+              <Col>
+                <span>光伏+电网</span>
+                <span style={{margin: '0 20px'}}>光伏+电网+用电</span>
+                <span>光伏+电网+用电+储能</span>
+              </Col>
+            </Row>
+            <Divider />
+            <Button style={{ marginLeft: 136 }} onClick={this.onClose}>取消</Button>
+            <Button style={{ margin: '0 20px' }} onClick={this.reset}>重置</Button>
+            <Button type='primary' onClick={this.search}>确 定</Button>
           </Drawer>
-          {
-            current === 0 ? <Table rowKey='id' columns={columns} dataSource={stationList} /> : current === 1 ? '通讯正常' : current === 2 ? '全部离线' : current === 3 ? '部分离线' : current === 4 ? '无报警' : current === 5 ? '有报警' : '未接入'
-          }
+          <Table rowKey='id' columns={columns} dataSource={list} scroll={{ x: 1500 }} />
         </Card>
-        <FormData open={open} closeDrawer={this.closeDrawer} />
+        <AddStation open={open} closeDrawer={this.closeDrawer} />
       </div >
     )
   }

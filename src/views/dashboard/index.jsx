@@ -30,9 +30,9 @@ export default class Dashboard extends Component {
             </Card>
           </Col>
           <Col className="gutter-row" span={12}>
-            <Card style={{ height: 340 }}>
+            <div style={{ height: 340 }}>
               <Map />
-            </Card>
+            </div>
           </Col>
           <Col className="gutter-row" span={12}>
             <Card style={{ height: 340 }}>

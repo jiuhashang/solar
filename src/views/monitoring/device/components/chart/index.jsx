@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import * as echarts from 'echarts'
-import * as dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { Card, Radio, DatePicker } from 'antd'
 
 import { getDeviceView } from '../../../../../api/monitoring'
@@ -111,6 +111,9 @@ export default class Chart extends Component {
       ]
     }
     option && this.myChart.setOption(option)
+    window.addEventListener('resize', () => {
+      this.myChart.resize()
+    })
   }
   updateChart = (type) => {
     var option = {

@@ -12,21 +12,19 @@ class  MapComponent extends Component {
     AMapLoader.load({
       key: "a262e007b273b03941d3e551974dbbc8", // 申请好的Web端开发者Key，首次调用 load 时必填
       version: "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-      plugins: ['AMap.ToolBar',
-        'AMap.Scale',
-        'AMap.Geolocation'] // 需要使用的的插件列表，如比例尺'AMap.Scale'等
+      plugins: ['AMap.ToolBar', 'AMap.Geolocation'] // 需要使用的的插件列表
     }).then((AMap) => {
       this.map = new AMap.Map("container", { //设置地图容器id
         zoomEnable: true,
         scrollWheel: false,
         viewMode: "3D", //是否为3D地图模式
-        zoom: 4, //初始化地图级别
-        center: [110.602725,36.076636], //初始化地图中心点位置
+        zoom: 3.5, //初始化地图级别
+        center: [111.002725,38.076636], //初始化地图中心点位置
       })
       // 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
       this.map.addControl(new AMap.ToolBar())
       // 在图面添加比例尺控件，展示地图在当前层级和纬度下的比例尺
-      this.map.addControl(new AMap.Scale())
+      // this.map.addControl(new AMap.Scale())
       // 在图面添加鹰眼控件，在地图右下角显示地图的缩略图
       // this.map.addControl(new AMap.HawkEye({isOpen:true}))
       // 在图面添加类别切换控件，实现默认图层与卫星图、实施交通图层之间切换的控制
@@ -38,13 +36,13 @@ class  MapComponent extends Component {
         })
       )
     }).catch(e => {
-      console.log(e)
+      // console.log(e)
     })
   }
   render() {
     // 1.初始化创建地图容器,div标签作为地图容器，同时为该div指定id属性；
     return (
-      <div id="container" className="map" style={{ height: '360px' }}></div>
+      <div id="container" className="map" style={{ minHeight: '260px' }}></div>
     )
   }
 }

@@ -12,21 +12,22 @@ export default class Electricity extends Component {
     }
   }
   render() {
-    const { sumPower, dateSum, monSum, yearSum, totalSum } = this.props
+    console.log(this.props)
+    const { dateSum, electricityScale, monSum, sumPower, totalInstall, totalSum, yearSum } = this.props
     return (
       <div className='alll'>
         <div className='center'>
           <div className='left'>
-            <Progress type="circle" percent={0} width={80} />
+            <Progress type="circle" percent={electricityScale} width={80} />
             <div className='fs12' style={{ marginTop: 5 }}>实时发电效率</div>
           </div>
           <div className='middle'>
             <p className='fs12'>实时总功率 kW</p>
-            <p className='fs14'>{ sumPower }</p>
+            <p className='fs14'>{sumPower}</p>
           </div>
           <div className='right'>
-            <p className='fs12'>总装机容量 MWp</p>
-            <p className='fs14'></p>
+            <p className='fs12'>总装机容量 kWp</p>
+            <p className='fs14'>{totalInstall}</p>
           </div>
         </div>
         <Divider />
