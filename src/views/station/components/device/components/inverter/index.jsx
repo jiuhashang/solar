@@ -1,6 +1,6 @@
 // 逆变器
 import React, { Component } from 'react'
-import { Card, Tooltip, Table, Drawer, Row, Col, Descriptions } from 'antd'
+import { Card, Tooltip, Table, Drawer, Row, Col } from 'antd'
 import {
   EditOutlined,
   DeleteOutlined,
@@ -373,7 +373,7 @@ export default class Inverter extends Component {
                   </div>
                 </div>
               </Col>
-              <Col span={6} offset={10}>
+              <Col span={6} offset={10} style={{display: 'flex', justifyContent: 'end'}}>
                 <CloseCircleOutlined style={{ color: 'red', fontSize: 26, cursor: 'pointer' }} onClick={this.drawerClose} />
               </Col>
             </Row>
@@ -468,16 +468,20 @@ export default class Inverter extends Component {
                         </div>
                       </Col>
                     </Row>
-                    <Descriptions bordered size='small'>
-                      <Descriptions.Item label="当日发电量(有功)(kWh)">{Etdy_ge1}</Descriptions.Item>
-                      <Descriptions.Item label="当月发电量(有功)(kWh)">{Emon1}</Descriptions.Item>
-                      <Descriptions.Item label="累计发电量(有功)(kWh)">{Et_ge0}</Descriptions.Item>
-                      <Descriptions.Item label="直流输入总功率(kW)">{DPi_t1 / 1000}</Descriptions.Item>
-                      <Descriptions.Item label="交流输出总有功功率(kW)">{APo_t1 / 1000}</Descriptions.Item>
-                      <Descriptions.Item label="交流无功总功率(Var)">{A_Qt1}</Descriptions.Item>
-                      <Descriptions.Item label="功率因数值">{FV_P}</Descriptions.Item>
-                      <Descriptions.Item label="直流离散率" span={1}>{_dispersion}</Descriptions.Item>
-                    </Descriptions>
+                    <Row className='fs12'>
+                      <Col span={8}>当日发电量(有功)(kWh)：{Etdy_ge1}</Col>
+                      <Col span={8}>当月发电量(有功)(kWh)：{Emon1}</Col>
+                      <Col span={8}>累计发电量(有功)(kWh)：{Et_ge0}</Col>
+                    </Row>
+                    <Row className='fs12' style={{margin: '10px 0'}}>
+                      <Col span={8}>直流输入总功率(kW)：{DPi_t1 / 1000}</Col>
+                      <Col span={8}>交流输出总有功功率(kW)：{APo_t1 / 1000}</Col>
+                      <Col span={8}>交流无功总功率(Var)：{A_Qt1}</Col>
+                    </Row>
+                    <Row className='fs12'>
+                      <Col span={8}>功率因数值：{FV_P}</Col>
+                      <Col span={8}>直流离散率：{_dispersion}</Col>
+                    </Row>
                   </Card>
                   <Card>
                     <div style={{ fontSize: 16, marginBottom: 20 }}>温度数据</div>

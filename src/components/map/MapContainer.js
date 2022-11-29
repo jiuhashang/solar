@@ -2,23 +2,23 @@ import React, { Component } from 'react'
 import AMapLoader from '@amap/amap-jsapi-loader'
 import './MapContainer.css'
 
-class  MapComponent extends Component {
+class MapContainer extends Component {
   constructor() {
-      super()     
-      this.map = {}
+    super()     
+    this.map ={}
   }
   // 2.dom渲染成功后进行map对象的创建
   componentDidMount() {
     AMapLoader.load({
-      key: "a262e007b273b03941d3e551974dbbc8", // 申请好的Web端开发者Key，首次调用 load 时必填
-      version: "2.0", // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-      plugins: ['AMap.ToolBar', 'AMap.Geolocation'] // 需要使用的的插件列表
+      key: "a262e007b273b03941d3e551974dbbc8",
+      version: "2.0",
+      plugins: ['AMap.ToolBar', 'AMap.Geolocation', 'AMap.PlaceSearch', 'AMap.Autocomplete']
     }).then((AMap) => {
       this.map = new AMap.Map("container", { //设置地图容器id
         zoomEnable: true,
         scrollWheel: false,
         viewMode: "3D", //是否为3D地图模式
-        zoom: 3.5, //初始化地图级别
+        zoom: 3.7, //初始化地图级别
         center: [111.002725,38.076636], //初始化地图中心点位置
       })
       // 在图面添加工具条控件，工具条控件集成了缩放、平移、定位等功能按钮在内的组合控件
@@ -35,6 +35,7 @@ class  MapComponent extends Component {
           offset: [20, 90]
         })
       )
+     
     }).catch(e => {
       // console.log(e)
     })
@@ -46,5 +47,5 @@ class  MapComponent extends Component {
     )
   }
 }
-//导出地图组建类
-export default MapComponent
+
+export default MapContainer

@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { Card, Drawer, Form, Input, Space, Button, Cascader, Select, Col, Row, DatePicker, message } from 'antd'
-import MapContainer from '../../../../components/map/MapContainer.js'
+// import MapContainer from '../../../../components/map/MapContainer.js'
 import { getCityList, addStation } from '../../../../api/monitoring'
+import { Map, APILoader, ToolBarControl, Geolocation, AutoComplete } from '@uiw/react-amap'
 
 const { Item } = Form
 const { Option } = Select
@@ -112,39 +113,45 @@ export default class AddStation extends Component {
             <h3>基础信息</h3>
             <Item label="电站名称" name="stationName" 
               rules={[
-                {
-                  required: true,
-                  message: '请输入电站名称',
-                },
+                { required: true, message: '请输入电站名称' }
               ]}
             >
               <Input />
             </Item>
             <Item label="电站位置" style={{margin: '20px 0'}}>
               <div style={{ height: 380, position: 'relative' }}>
-                <div style={{ display: 'flex', position: 'absolute',zIndex: 10, top: 10, left: 10 }}>
+                {/* <div style={{ display: 'flex', position: 'absolute',zIndex: 10, top: 10, left: 10 }}>
                   <Input style={{ width: 340, marginRight: 10 }} />
                   <Button type="primary">搜索</Button>
+                </div> */}
+                <div style={{position: 'absolute', width: '100%', height: 380}}>
+                  <APILoader version="2.0.5" akay="a262e007b273b03941d3e551974dbbc8">
+                    <Map zoom={4} center={[109.002725,36.076636]}>
+                      <ToolBarControl offset={[16, 10]} position="RB" />
+                      <Geolocation
+                        maximumAge={100000}
+                        borderRadius="5px"
+                        position="RB"
+                        offset={[16, 80]}
+                        zoomToAccuracy={true}
+                        showCircle={true}
+                      />
+                    </Map>
+                  </APILoader>
                 </div>
-                <MapContainer style={{position: 'absolute'}} />
               </div>
             </Item>
+
             <Item label="区域" name='area'
               rules={[
-                {
-                  required: true,
-                  message: '请选择区域',
-                },
+                { required: true, message: '请选择区域'}
               ]}
             >
               <Cascader options={options} onChange={this.areaChange} style={{ width: '49%' }} />
             </Item>
             <Item label="详细地址" name="locationAddress"
               rules={[
-                {
-                  required: true,
-                  message: '请输入详细地址',
-                },
+                { required: true, message: '请输入详细地址' }
               ]}
             >
               <Input />
@@ -153,10 +160,7 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="经度" name='locationLng'
                   rules={[
-                    {
-                      required: true,
-                      message: '请输入经度',
-                    },
+                    { required: true, message: '请输入经度'}
                   ]}
                 >
                   <Input />
@@ -165,10 +169,7 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="纬度" name='locationLat'
                   rules={[
-                    {
-                      required: true,
-                      message: '请输入纬度',
-                    },
+                    { required: true, message: '请输入纬度' }
                   ]}
                 >
                   <Input />
@@ -179,10 +180,7 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="建站日期" 
                   rules={[
-                    {
-                      required: true,
-                      message: '请选择建站日期',
-                    },
+                    { required: true, message: '请选择建站日期' }
                   ]}
                 >
                   <DatePicker
@@ -194,9 +192,9 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="并网日期">
                   <DatePicker
-                  onChange={this.gridChange}
-                  format='YYYY-MM-DD'
-                  />
+                    onChange={this.gridChange}
+                    format='YYYY-MM-DD'
+                    />
                 </Item>
               </Col>
             </Row>
@@ -244,10 +242,7 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="装机容量（kWp）" name="installedCapacity"
                   rules={[
-                    {
-                      required: true,
-                      message: '请输入装机容量'
-                    },
+                    { required: true, message: '请输入装机容量' }
                   ]}
                 >
                   <Input />
@@ -273,10 +268,7 @@ export default class AddStation extends Component {
               <Col span={12}>
                 <Item label="接入ID或地址" name="platformStationId"
                   rules={[
-                    {
-                      required: true,
-                      message: '请输入接入ID或地址',
-                    },
+                    { required: true, message: '请输入接入ID或地址' }
                   ]}
                 >
                   <Input />

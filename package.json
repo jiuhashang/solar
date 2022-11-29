@@ -11,6 +11,8 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@uiw/react-amap": "^4.0.4",
+    "@uiw/react-amap-label-marker": "^4.0.3",
     "antd": "^4.23.2",
     "axios": "^0.27.2",
     "babel-jest": "^27.4.2",
