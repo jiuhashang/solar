@@ -27,7 +27,7 @@ const items = [
     getItem('维保记录', '/home/record')
   ]),
   getItem('系统', 'sub4', <SettingOutlined />, [
-    getItem('账号管理', '/home/account'),
+    getItem('部门与成员', '/home/account'),
     getItem('权限管理', '/home/permission'),
     getItem('报警推送', '/home/push')
   ])

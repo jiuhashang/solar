@@ -6,7 +6,7 @@ export default class Map extends Component {
     return (
       <div className='map'>
         <div className='top' style={{fontSize: 14, color: '#000' }}>电站分布</div>
-        <MapComponent className='amap' />
+        <MapComponent className='amap' height={340} />
       </div>
     )
   }

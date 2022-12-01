@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Card, Drawer, Form, Input, Space, Button, Cascader, Select, Col, Row, DatePicker, message } from 'antd'
 // import MapContainer from '../../../../components/map/MapContainer.js'
 import { getCityList, addStation } from '../../../../api/monitoring'
-import { Map, APILoader, ToolBarControl, Geolocation, AutoComplete } from '@uiw/react-amap'
 
 const { Item } = Form
 const { Option } = Select
@@ -19,7 +18,6 @@ export default class AddStation extends Component {
   componentDidMount() {
     this.getCityList()
   }
-  
   getCityList = () => {
     getCityList().then(res => {
       const options = this.getCity(res.data)
@@ -118,29 +116,9 @@ export default class AddStation extends Component {
             >
               <Input />
             </Item>
-            <Item label="电站位置" style={{margin: '20px 0'}}>
-              <div style={{ height: 380, position: 'relative' }}>
-                {/* <div style={{ display: 'flex', position: 'absolute',zIndex: 10, top: 10, left: 10 }}>
-                  <Input style={{ width: 340, marginRight: 10 }} />
-                  <Button type="primary">搜索</Button>
-                </div> */}
-                <div style={{position: 'absolute', width: '100%', height: 380}}>
-                  <APILoader version="2.0.5" akay="a262e007b273b03941d3e551974dbbc8">
-                    <Map zoom={4} center={[109.002725,36.076636]}>
-                      <ToolBarControl offset={[16, 10]} position="RB" />
-                      <Geolocation
-                        maximumAge={100000}
-                        borderRadius="5px"
-                        position="RB"
-                        offset={[16, 80]}
-                        zoomToAccuracy={true}
-                        showCircle={true}
-                      />
-                    </Map>
-                  </APILoader>
-                </div>
-              </div>
-            </Item>
+            {/* <Item label="电站位置" style={{margin: '20px 0'}}>
+              <MapContainer height={380} />
+            </Item> */}
 
             <Item label="区域" name='area'
               rules={[

@@ -14,9 +14,9 @@ import Contrast from '../analyse/contrast'
 
 import Record from '../operation/record'
 
-import Account from '../system/accountManage'
-import Permission from '../system/rightsManage'
-import Push from '../system/alarmPush'
+import Account from '../system/account'
+import Permission from '../system/rights'
+import Push from '../system/alarm'
 
 const { Header, Sider, Content } = Layout
 

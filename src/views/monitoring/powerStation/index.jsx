@@ -8,7 +8,7 @@ import {
   ExclamationCircleOutlined,
   WarningOutlined,
   StopOutlined,
-  SyncOutlined,
+  // SyncOutlined,
   CaretDownOutlined,
   UnorderedListOutlined,
   EnvironmentOutlined,
@@ -32,13 +32,19 @@ export default class Power extends Component {
     partWorn: 0, // 有报警
     totalNum: 0, // 电站总数
 
-    
     connectionStatus: undefined, // 通讯
     wornStatus: undefined, // 报警
     joinStatus: undefined, // 接入
     provinceId: undefined,
     cityId: undefined,
     areaId: undefined,
+    installedCapacityStart: undefined, // 起始装机容量
+    installedCapacityEnd: undefined, // 结束装机容量
+    stationType: undefined, // 电站类型
+    systemType: undefined, // 系统类型
+
+    cascaderValue: [],
+
     list: [], // 电站列表
     current: 0,
     open: false,
@@ -46,14 +52,14 @@ export default class Power extends Component {
     options: [], // 省市区
   }
   componentDidMount() {
-    this.gitList()
+    this.getList()
     this.getDeviceStatusNum()
   }
 
   // 获取电站列表
-  gitList = () => {
-    const { connectionStatus, wornStatus, joinStatus } = this.state
-    const obj = { connectionStatus, wornStatus, joinStatus }
+  getList = () => {
+    const { connectionStatus, wornStatus, joinStatus, provinceId, cityId, areaId, installedCapacityStart, installedCapacityEnd, stationType, systemType } = this.state
+    const obj = { connectionStatus, wornStatus, joinStatus, provinceId, cityId, areaId, installedCapacityStart, installedCapacityEnd, stationType, systemType }
     getStationList(obj).then(res => {
       // console.log(res)
       this.setState({
@@ -64,7 +70,6 @@ export default class Power extends Component {
   // 获取电站数量
   getDeviceStatusNum = () => {
     getDeviceStatusNum().then(res => {
-      // console.log(res);
       const { allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum } = res.data
       this.setState({ allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum })
     })
@@ -148,10 +153,27 @@ export default class Power extends Component {
   }
   areaChange = (value) => {
     this.setState({
+      cascaderValue: value,
       provinceId: value[0], // 省
       cityId: value[1], // 市
       areaId: value[2], // 区
     })
+  }
+  start = (e) => {
+    this.setState({
+      installedCapacityStart: e.target.value
+    })
+  }
+  end = (e) => {
+    this.setState({
+      installedCapacityEnd: e.target.value
+    })
+  }
+  stationTab = (stationType) => {
+    this.setState({ stationType })
+  }
+  systemTab = (systemType) => {
+    this.setState({ systemType })
   }
   showDrawer = () => {
     this.setState({ open: true })
@@ -167,12 +189,34 @@ export default class Power extends Component {
     this.setState({ open1: !open1 })
   }
 
-  onClose = () => {}
-  reset = () => {}
-  search = () => {}
+  onClose = () => {
+    this.setState({
+      installedCapacityStart: undefined, // 起始装机容量
+      installedCapacityEnd: undefined, // 结束装机容量
+      stationType: undefined, // 电站类型
+      systemType: undefined, // 系统类型
+      cascaderValue: [],
+      open1: false
+    })
+  }
+  reset = () => {
+    this.setState({
+      installedCapacityStart: undefined, // 起始装机容量
+      installedCapacityEnd: undefined, // 结束装机容量
+      stationType: undefined, // 电站类型
+      systemType: undefined, // 系统类型
+      cascaderValue: []
+    })
+  }
+  search = () => {
+    this.getList()
+    this.setState({
+      open1: false
+    })
+  }
   
   render() {
-    const { allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum, list, current, open, open1, options } = this.state
+    const { allConnectionOut, connectionIn, joinIn, noWorn, partConnectionOut, partWorn, totalNum, list, current, open, open1, options, installedCapacityStart, installedCapacityEnd, stationType, systemType, cascaderValue } = this.state
     const columns = [
       {
         title: '电站名称',
@@ -307,7 +351,7 @@ export default class Power extends Component {
             <div>
               <span style={{ fontSize: 12, cursor: 'pointer' }} onClick={this.showDrawer1}>展开筛选</span>
               <CaretDownOutlined style={{ margin: '0 20px 0 10px' }} />
-              <SyncOutlined style={{ fontSize: 16, cursor: 'pointer' }} />
+              {/* <SyncOutlined style={{ fontSize: 16, cursor: 'pointer' }} /> */}
             </div>
           </div>
         </Card>
@@ -323,33 +367,33 @@ export default class Power extends Component {
             <Row gutter={20}>
               <Col span={2}>电站区域</Col>
               <Col>
-                <Cascader options={options} onChange={this.areaChange} />
+                <Cascader options={options} onChange={this.areaChange} style={{width: 280}} value={cascaderValue} />
               </Col>
             </Row>
             <Divider />
             <Row gutter={20}>
               <Col span={2}>装机容量</Col>
               <Col style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Input /> ~ <Input />
+                <Input onChange={this.start} style={{width: 280}} type='number' value={installedCapacityStart} placeholder='最小容量 kWp' /> ~ <Input onChange={this.end} style={{width: 280}} type='number' value={installedCapacityEnd} placeholder='最大容量 kWp' />
               </Col>
             </Row>
             <Divider />
             <Row gutter={20}>
               <Col span={2}>电站类型</Col>
               <Col>
-                <span style={{marginRight: 20}}>分布式户用</span>
-                <span>分布式商业</span>
-                <span style={{margin: '0 20px'}}>分布式工业</span>
-                <span>地面电站</span>
+                <span style={{color: stationType === 0 ? '#1890FF' : ''}} className='nocur' onClick={() => this.stationTab(0)}>分布式户用</span>
+                <span style={{color: stationType === 1 ? '#1890FF' : '', margin: '0 20px'}} className='nocur' onClick={() => this.stationTab(1)}>分布式商业</span>
+                <span style={{color: stationType === 2 ? '#1890FF' : ''}} className='nocur' onClick={() => this.stationTab(2)}>分布式工业</span>
+                <span style={{color: stationType === 3 ? '#1890FF' : '', marginLeft: 20}} className='nocur' onClick={() => this.stationTab(3)}>地面电站</span>
               </Col>
             </Row>
             <Divider />
             <Row gutter={20}>
               <Col span={2}>系统类型</Col>
               <Col>
-                <span>光伏+电网</span>
-                <span style={{margin: '0 20px'}}>光伏+电网+用电</span>
-                <span>光伏+电网+用电+储能</span>
+                <span style={{color: systemType === 0 ? '#1890FF' : ''}} className='nocur' onClick={() => this.systemTab(0)}>光伏+电网</span>
+                <span style={{color: systemType === 1 ? '#1890FF' : '', margin: '0 20px'}} className='nocur' onClick={() => this.systemTab(1)}>光伏+电网+用电</span>
+                <span style={{color: systemType === 2 ? '#1890FF' : ''}} className='nocur' onClick={() => this.systemTab(2)}>光伏+电网+用电+储能</span>
               </Col>
             </Row>
             <Divider />
