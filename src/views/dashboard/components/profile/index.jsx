@@ -18,6 +18,7 @@ export default class Profile extends Component {
   getStationCount = () => {
     getStationCount().then(res => {
       const { dateSum, electricityScale, monSum, sumPower, totalInstall, totalSum, yearSum } = res.data
+      this.props.getTotalSum(totalSum)
       this.setState({
         dateSum,
         electricityScale,
@@ -29,6 +30,8 @@ export default class Profile extends Component {
       })
     })
   }
+  
+
   componentDidMount() {
     this.getStationCount()
   }

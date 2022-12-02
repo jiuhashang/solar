@@ -81,49 +81,49 @@ export default class Power extends Component {
         connectionStatus: undefined,
         wornStatus: undefined,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 1) {
       this.setState({
         current,
         connectionStatus: 0,
         wornStatus: undefined,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 2) {
       this.setState({
         current,
         connectionStatus: 2,
         wornStatus: undefined,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 3) {
       this.setState({
         current,
         connectionStatus: 1,
         wornStatus: undefined,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 4) {
       this.setState({
         current,
         connectionStatus: undefined,
         wornStatus: 0,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 5) {
       this.setState({
         current,
         connectionStatus: undefined,
         wornStatus: 1,
         joinStatus: undefined
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     } else if (current === 6) {
       this.setState({
         current,
         connectionStatus: undefined,
         wornStatus: undefined,
         joinStatus: 0
-      }, () => { this.gitList() })
+      }, () => { this.getList() })
     }
   }
   // 获取 省市区

@@ -7,8 +7,17 @@ import State from './components/state'
 import Map from './components/map'
 import Hour from './components/hour'
 import Power from './components/power'
+import Displacement from './components/displacement'
 
 export default class Dashboard extends Component {
+  state = {
+    totalSum: 0
+  }
+  getTotalSum = (totalSum) => {
+    this.setState({
+      totalSum
+    })
+  }
   render() {
     return (
       <div className='dashboard'>
@@ -16,7 +25,7 @@ export default class Dashboard extends Component {
         <Row gutter={[10, 10]}>
           <Col span={12}>
             <Card style={{ height: 340 }}>
-              <Profile />
+              <Profile getTotalSum={this.getTotalSum} />
             </Card>
           </Col>
           <Col className="gutter-row" span={12}>
@@ -45,6 +54,7 @@ export default class Dashboard extends Component {
             </Card>
           </Col>
         </Row>
+        <Displacement totalSum={this.state.totalSum} />
       </div>
     )
   }
