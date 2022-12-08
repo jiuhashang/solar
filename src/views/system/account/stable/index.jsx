@@ -5,32 +5,35 @@ import {
   DeleteOutlined,
   KeyOutlined
 } from '@ant-design/icons'
-import { getDepartment, addOrUpdateOne, getUserList } from '../../../../api/system'
+import { addOrUpdateOne, getUserList } from '../../../../api/system'
 
 const { Item } = Form
 const { Option } = Select
 export default class Stable extends Component {
   componentDidMount() {
-    this.getList()
     this.getUserList()
   }
   state = {
     list: [], // 部门成员列表
-    isModalOpen: false
+    isModalOpen: false,
+    departmentId: 0,
+    pageIndex: 1,
+    pageSize: 10,
+    total: 0
   }
 
   formRef = React.createRef()
 
-  getList = () => {
-    getDepartment().then(res => {
-      this.setState({
-        branch: res.data
-      })
-    })
-  }
+  // 获取部门人员列表
   getUserList = () => {
-    getUserList().then(res => {
-      // console.log(res);
+    const { departmentId, pageIndex, pageSize } = this.state
+    const obj = { departmentId, pageIndex, pageSize }
+    getUserList(obj).then(res => {
+      // console.log(res)
+      this.setState({
+        list: res.data.records,
+        total: res.data.total
+      })
     })
   }
   add = () => {
@@ -46,14 +49,15 @@ export default class Stable extends Component {
   remove = () => {}
 
   handleOk = () => {
-    this.formRef.current.validateFields().then( values => {
+    this.formRef.current.validateFields().then(values => {
       addOrUpdateOne(values).then(res => {
         message.success(res.msg)
+        
       })
       this.setState({
         isModalOpen: false
       })
-    }).catch( err => {})
+    }).catch(err => {})
   }
   handleCancel = () => {
     this.formRef.current.resetFields()
@@ -61,6 +65,7 @@ export default class Stable extends Component {
       isModalOpen: false
     })
   }
+ 
 
   render() {
     const columns = [
@@ -130,11 +135,12 @@ export default class Stable extends Component {
       }
     ]
     const { list, isModalOpen } = this.state
-    const { branch } = this.props
+    const { tree } = this.props
+    console.log(tree)
     return (
       <div className='stable'>
         <div className='top'>
-          <h3>西子运维</h3>
+          <h3>{tree?.length > 0 ? tree[0].name: null}</h3>
           <div>
             <Button type="link" onClick={this.add}>添加部门</Button>
             <Button type="link" onClick={this.edit}>编辑部门</Button>
@@ -151,7 +157,6 @@ export default class Stable extends Component {
         >
           <Form
             ref={this.formRef}
-            name='basic'
             layout='vertical'
             initialValues={{
               name: '',
@@ -181,7 +186,7 @@ export default class Stable extends Component {
                 // onChange={this.onGenderChange}
                 allowClear
               >
-                { branch.map( item => <Option value={item.parentId} key='id'>{item.name}</Option>) }
+                { tree.map(item => <Option value={item.id} key={item.id}>{item.name}</Option>) }
               </Select>
             </Item>
           </Form>
