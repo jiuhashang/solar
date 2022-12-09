@@ -40,7 +40,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // NProgress.start()
-    config.headers['token'] = window.sessionStorage.getItem('token')
+    config.headers['token'] = window.localStorage.getItem('token')
     // }
     return config
   },

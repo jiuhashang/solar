@@ -22,6 +22,10 @@ const { Header, Sider, Content } = Layout
 
 export default class Home extends Component {
   render() {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      return <Redirect to='/login' />
+    }
     return (
       <Layout className='layout'>
         <Header>

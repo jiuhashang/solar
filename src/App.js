@@ -5,7 +5,7 @@ import './assets/css/global.css'
 import './App.css'
 
 import Station from './views/station'
-// import Login from './views/login'
+import Login from './views/login'
 import Home from './views/home'
 
 AmapReactConfig.version = '2.0'
@@ -20,7 +20,8 @@ export default class App extends Component {
       <Switch>
         <Route path='/home' component={Home} />
         <Route path='/station' component={Station} />
-        <Redirect to='home' />
+        <Route path='/login' component={Login} />
+        <Redirect to='/login' />
       </Switch>
     )
   }
