@@ -333,8 +333,8 @@ export default class Inverter extends Component {
             showQuickJumper: true,
             pageSizeOptions: [5,10,20,50],
             showTotal: total => `共${total}条`,
-            onShowSizeChange: (current, pageSize) => this.getDeviceList(current, pageSize),
-            onChange: (current, size) => this.getDeviceList(current, size),
+            onShowSizeChange: this.getDeviceList,
+            onChange: this.getDeviceList,
             total,
             current
           }}

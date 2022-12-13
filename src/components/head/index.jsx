@@ -15,25 +15,21 @@ import './index.less'
         items={[
           {
             key: '1',
-            label: (
-              <div onClick={this.logout} style={{width: 80, textAlign: 'center'}}>
-                退 出
-              </div>
-            ),
+            label: (<div onClick={this.logout} style={{width: 80, textAlign: 'center'}}>退 出</div>)
           }
         ]}
       />
     )
     return (
       <div className='header'>
-        <div style={{color: '#fff', fontSize: 18}}>西子运维管理平台</div>
+        <div style={{color: '#eee', fontSize: 24}}>西子运维管理平台</div>
         <div>
-          <Avatar size={30} icon={<UserOutlined />} style={{marginRight: 15}} />
+          <Avatar size={36} icon={<UserOutlined />} style={{marginRight: 15}} />
           <Dropdown overlay={menu}>
             <a onClick={(e) => e.preventDefault()}>
               <Space>
                 <span style={{color: '#fff', fontSize: 16}}>
-                  {sessionStorage.getItem('loginName')}
+                  {localStorage.getItem('loginName')}
                 </span>
                 <DownOutlined />
               </Space>
