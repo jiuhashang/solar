@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import { Card, Drawer, Form, Input, Space, Select, Button, Col, Row, DatePicker } from 'antd'
+import RichTextEditor from '../editor'
 // import './index.less'
 
 const { Item } = Form
 const { Option } = Select
 export default class AddForm extends Component {
+  contentRef = React.createRef()
+  remarkRef = React.createRef()
   state = {
     open: true,
     options: []
@@ -45,14 +48,15 @@ export default class AddForm extends Component {
         >
           <Card style={{ marginBottom: 5 }}>
             <h3>维保信息</h3>
-            <Item label="维保标题" name="stationName"
+
+            <Item label="维保标题" name="title"
               rules={[
                 { required: true, message: '请输入维保标题' }
               ]}
             >
               <Input placeholder='请输入维保标题' />
             </Item>
-            <Item label="维保成员" name='area'
+            <Item label="维保成员" name='ywStationProtectUserList'
               rules={[
                 { required: true, message: '请选择维保成员' }
               ]}
@@ -65,7 +69,7 @@ export default class AddForm extends Component {
                 options={options}
               />
             </Item>
-            <Item label="维保电站" name="locationAddress"
+            <Item label="维保电站" name="stationName"
               rules={[
                 { required: true, message: '请选择维保电站' }
               ]}
@@ -79,7 +83,7 @@ export default class AddForm extends Component {
             </Item>
             <Row gutter={20}>
               <Col span={6}>
-                <Item label="维保类型" name='locationLng'
+                <Item label="维保类型" name='type'
                   rules={[
                     { required: true, message: '请选择维保类型' }
                   ]}
@@ -94,7 +98,7 @@ export default class AddForm extends Component {
                 </Item>
               </Col>
               <Col span={18}>
-                <Item label="维保目标" name='locationLat'
+                <Item label="维保目标" name='protectTarget'
                   rules={[
                     { required: true, message: '请选择设备' }
                   ]}
@@ -103,22 +107,22 @@ export default class AddForm extends Component {
                 </Item>
               </Col>
             </Row>
-            <Item label="维保时间" name='1215'
+            <Item label="维保时间" name='protectTime'
               rules={[
                 { required: true, message: '请选择维保时间' }
               ]}
             >
               <DatePicker showTime onChange={this.onChange} onOk={this.onOk} style={{ width: '24%' }} />
             </Item>
-            <Item label="维保内容" name='1df215'
+            <Item label="维保内容" name='content'
               rules={[
                 { required: true, message: '请填写维保内容' }
               ]}
             >
-
+              <RichTextEditor ref={this.contentRef}  />
             </Item>
-            <Item label="备注" name='1215rgfg'>
-
+            <Item label="备注" name='remark'>
+              <RichTextEditor ref={this.remarkRef} />
             </Item>
           </Card>
         </Form>

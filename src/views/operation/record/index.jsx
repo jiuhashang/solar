@@ -26,7 +26,7 @@ export default class Record extends Component {
   getList = () => {
     const { pageIndex, pageSize } = this.state
     getLog({pageIndex, pageSize}).then(res => {
-      console.log(res)
+      // console.log(res)
     })
   }
 
@@ -49,12 +49,11 @@ export default class Record extends Component {
     const columns = [
       {
         title: '维保标题',
+        dataIndex: 'title',
         width: 300,
         fixed: 'left',
         ellipsis: true,
-        render: (row) => (
-          <Link>{row.stationName}</Link>
-        )
+        render: title => <Link>{title}</Link>
       },
       {
         title: '维保人',
@@ -63,7 +62,7 @@ export default class Record extends Component {
       },
       {
         title: '维保时间',
-        dataIndex: 'wornStatus',
+        dataIndex: 'protectTime',
         width: 150
       },
       {
@@ -73,7 +72,7 @@ export default class Record extends Component {
       },
       {
         title: '维保电站',
-        dataIndex: 'electricPower',
+        dataIndex: 'stationName',
         width: 300,
         ellipsis: true
       },
@@ -85,12 +84,12 @@ export default class Record extends Component {
       },
       {
         title: '创建时间',
-        dataIndex: 'dateElectric',
+        dataIndex: 'createTime',
         width: 150
       },
       {
         title: '更新时间',
-        dataIndex: 'electricHour',
+        dataIndex: 'updateTime',
         width: 150
       },
       {
