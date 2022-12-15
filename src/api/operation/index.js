@@ -16,3 +16,37 @@ export function addStation ( params ) {
   params
   )
 }
+
+// 获取所有电站列表
+export function getAllStationList(params) {
+  return request({
+    url: '/xzyw/ywStation/getAllList',
+    method: 'get',
+    params
+  })
+}
+
+// 获取所有人员列表
+export function getAllUserList(params) {
+  return request({
+    url: '/xzyw/ywAdminUser/getAllList',
+    method: 'get',
+    params
+  })
+}
+
+// 获取对应电站所有设备列表
+export function getAllDeviceList(params) {
+  return request({
+    url: '/xzyw/ywStationDevice/getListByStation',
+    method: 'get',
+    params
+  })
+}
+
+// 添加/修改维保记录
+export function addOrUpdateOne( params ) {
+  return request.post('/xzyw/ywStationProtectLog/addOrUpdateOne', 
+  params
+  )
+}

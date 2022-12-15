@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { Button, Card, Table, Tooltip } from 'antd'
 import {
   EditOutlined,
@@ -26,12 +25,15 @@ export default class Record extends Component {
   getList = () => {
     const { pageIndex, pageSize } = this.state
     getLog({pageIndex, pageSize}).then(res => {
-      // console.log(res)
+      this.setState({
+        list: res.data.records
+      })
     })
   }
 
   // 添加/修改 维保记录 弹框 开关
-  showDrawer = () => {
+  showDrawer = (row) => {
+    this.row = row || {}
     this.setState({ open: true })
   }
   closeDrawer = (status) => {
@@ -52,23 +54,25 @@ export default class Record extends Component {
         dataIndex: 'title',
         width: 300,
         fixed: 'left',
-        ellipsis: true,
-        render: title => <Link>{title}</Link>
+        ellipsis: true
       },
       {
         title: '维保人',
         width: 120,
-        dataIndex: 'connectStatus'
+        ellipsis: true,
+        dataIndex: 'ywAdminUserList',
+        render: (ywAdminUserList) => ywAdminUserList[0].userName + `等${ywAdminUserList.length}人`
       },
       {
         title: '维保时间',
         dataIndex: 'protectTime',
-        width: 150
+        width: 180
       },
       {
         title: '维保类型',
-        dataIndex: 'installedCapacity',
-        width: 120
+        dataIndex: 'type',
+        width: 120,
+        render: (type) => <span>{type === 0 ? '电站' : type === 1 ? '设备' : '其他' }</span>
       },
       {
         title: '维保电站',
@@ -78,28 +82,29 @@ export default class Record extends Component {
       },
       {
         title: '维保目标',
-        dataIndex: 'powerInOne',
-        width: 300,
-        ellipsis: true
+        dataIndex: 'ywStationDeviceList',
+        width: 200,
+        ellipsis: true,
+        render: ywStationDeviceList => ywStationDeviceList[0].deviceName + ywStationDeviceList[0].deviceSn + `等${ywStationDeviceList.length}`
       },
       {
         title: '创建时间',
         dataIndex: 'createTime',
-        width: 150
+        width: 180
       },
       {
         title: '更新时间',
         dataIndex: 'updateTime',
-        width: 150
+        width: 180
       },
       {
         title: '操作',
         fixed: 'right',
         width: 100,
-        render: () => (
+        render: (row) => (
           <>
             <Tooltip title="编辑" color='black'>
-              <EditOutlined style={{ padding: '0 10px 0 10px', cursor: 'pointer' }} />
+              <EditOutlined style={{ padding: '0 10px 0 10px', cursor: 'pointer' }} onClick={() => this.showDrawer(row)} />
             </Tooltip>
             <Tooltip title="删除" color='black'>
               <DeleteOutlined style={{ cursor: 'pointer' }} />
@@ -119,7 +124,7 @@ export default class Record extends Component {
           <Table rowKey='id' columns={columns} dataSource={list} scroll={{ x: 1500 }} />
         </Card>
         {/* 添加/修改 维保记录 */}
-        <AddForm open={open} closeDrawer={this.closeDrawer} />
+        <AddForm open={open} closeDrawer={this.closeDrawer} row={this.row} />
         {/* 详情 */}
         <Detail open={openDetail} closeDrawer={this.closeDetail} />
       </div>
