@@ -96,18 +96,14 @@ export default class AddForm extends Component {
       type: value
     })
   }
-  // 维保人员选择列表 
-  handleUserChange = () => { }
-  // 维保设备选择列表
-  handleDeviceChange = () => { }
-
   render() {
-    const { open } = this.props
-    // console.log(row)
+    const { open , row } = this.props
+    console.log(row);
+    this.state.stationId = row.stationId
     const { userOptions, stationOptions, deviceOptions, type, stationId, stationName } = this.state
     return (
       <Drawer
-        title="添加维保记录"
+        title={`${row.id ? '修改' : '添加'}维保记录`}
         placement='right'
         width='70%'
         headerStyle={{ backgroundColor: '#FFF' }}
@@ -119,7 +115,7 @@ export default class AddForm extends Component {
         extra={
           <Space>
             <Button onClick={this.onClose}>取消</Button>
-            <Button type="primary" onClick={this.add}>创建</Button>
+            <Button type="primary" onClick={this.add}>{row.id ? '修改' : '创建'}</Button>
           </Space>
         }
       >
@@ -127,20 +123,19 @@ export default class AddForm extends Component {
           name="basic"
           ref={this.formRef}
           layout="vertical"
-          className='add-form'
           initialValues={{
-            // title: row.title,
-            // protectUser: row.protectUser.split(','),
-            // stationId: row.stationId,
-            // type: row.type,
-            // protectTime: row.protectTime,
+            title: row.title,
+            protectUser: row.ywAdminUserList,
+            stationId: row.stationId,
+            protectTarget: row.stationName,
+            type,
+            protectTime: moment(row.protectTime),
             // content: row.content,
             // remark: row.remark
           }}
         >
-          <Card style={{ marginBottom: 5 }}>
+          <Card style={{marginBottom: 5}}>
             <h3>维保信息</h3>
-
             <Item label="维保标题" name="title"
               rules={[
                 { required: true, message: '请输入维保标题' }
@@ -157,9 +152,8 @@ export default class AddForm extends Component {
                 mode="multiple"
                 allowClear
                 placeholder="请选择维保人员"
-                onChange={this.handleUserChange}
               >
-                {userOptions.map(item => <Option value={item.id} key={item.id}>{item.userName}</Option>)}
+                {userOptions.map(item => (<Option value={item.id} key={item.id}>{item.userName}</Option>))}
               </Select>
             </Item>
             <Item label="维保电站" name="stationId"
@@ -236,7 +230,7 @@ export default class AddForm extends Component {
                 { required: true, message: '请选择维保时间' }
               ]}
             >
-              <DatePicker showTime onChange={this.onChange} onOk={this.onOk} format='YYYY-MM-DD HH:mm:ss' style={{ width: '24%' }} />
+              <DatePicker showTime format='YYYY-MM-DD HH:mm:ss' style={{ width: '24%' }} />
             </Item>
             <Item label="维保内容" name='content'
               // rules={[

@@ -380,7 +380,8 @@ export default class Account extends Component {
             </Item>
           </Form>
         </Modal>
-        {/* 添加成员 */}
+        
+        {/* 添加/修改成员 */}
         <Drawer
           title={user.id ? '编辑成员' : '添加成员'}
           width='60%'

@@ -14,6 +14,7 @@ export default class Record extends Component {
     pageIndex: 1,
     pageSize: 10,
     list: [], 
+    loading: false,
     open: false, // 添加/修改 维保记录 弹框
     openDetail: false, // 详情 弹框
   }
@@ -23,22 +24,33 @@ export default class Record extends Component {
   }
   // 获取维保记录
   getList = () => {
+    this.setState({
+      loading: true
+    })
     const { pageIndex, pageSize } = this.state
     getLog({pageIndex, pageSize}).then(res => {
       this.setState({
-        list: res.data.records
+        list: res.data.records,
+        loading: false
       })
     })
   }
 
   // 添加/修改 维保记录 弹框 开关
   showDrawer = (row) => {
-    this.row = row || {}
+    this.row = row
     this.setState({ open: true })
   }
   closeDrawer = (status) => {
     this.setState({
       open: status
+    })
+  }
+  // 详情
+  showDetailDrawer = (detail) => {
+    this.detail = detail
+    this.setState({
+      openDetail: true
     })
   }
   closeDetail = (status) => {
@@ -51,10 +63,10 @@ export default class Record extends Component {
     const columns = [
       {
         title: '维保标题',
-        dataIndex: 'title',
         width: 300,
         fixed: 'left',
-        ellipsis: true
+        ellipsis: true,
+        render: (row) => <Button type="link" onClick={() => this.showDetailDrawer(row)}>{row.title}</Button>
       },
       {
         title: '维保人',
@@ -83,7 +95,7 @@ export default class Record extends Component {
       {
         title: '维保目标',
         dataIndex: 'ywStationDeviceList',
-        width: 200,
+        width: 300,
         ellipsis: true,
         render: ywStationDeviceList => ywStationDeviceList[0].deviceName + ywStationDeviceList[0].deviceSn + `等${ywStationDeviceList.length}`
       },
@@ -113,7 +125,9 @@ export default class Record extends Component {
         )
       }
     ]
-    const { list, open, openDetail } = this.state
+    const { list, loading, open, openDetail } = this.state
+    const row = this.row || {}
+    const detail = this.detail || {}
     return (
       <div className='record'>
         <div className='top'>
@@ -121,12 +135,12 @@ export default class Record extends Component {
           <Button type="primary" onClick={this.showDrawer}>添加新维保记录</Button>
         </div>
         <Card className='record-content'>
-          <Table rowKey='id' columns={columns} dataSource={list} scroll={{ x: 1500 }} />
+          <Table loading={loading} rowKey='id' columns={columns} dataSource={list} scroll={{ x: 1500 }} />
         </Card>
         {/* 添加/修改 维保记录 */}
-        <AddForm open={open} closeDrawer={this.closeDrawer} row={this.row} />
+        <AddForm open={open} closeDrawer={this.closeDrawer} row={row} />
         {/* 详情 */}
-        <Detail open={openDetail} closeDrawer={this.closeDetail} />
+        <Detail open={openDetail} closeDetail={this.closeDetail} detail={detail} />
       </div>
     )
   }

@@ -136,7 +136,6 @@ export default class Stable extends Component {
     ]
     const { list, isModalOpen } = this.state
     const { tree } = this.props
-    console.log(tree)
     return (
       <div className='stable'>
         <div className='top'>
