@@ -47,15 +47,15 @@ export default class AddForm extends Component {
   // 创建/修改
   add = () => {
     const { stationId, protectTime } = this.formRef.current.getFieldsValue()
-    const stationName = this.state.stationOptions.find(item => stationId === item.id).stationName
     const content = this.contentRef.current.getDetail()
     const remark = this.contentRef.current.getDetail()
     this.formRef.current.validateFields().then(values => {
       console.log(values)
+      const stationName = this.state.stationOptions.find(item => stationId === item.id).stationName
       if (values.type === 0) {
         values.protectTarget = stationName
       }
-      values.stationName= stationName
+      values.stationName = stationName
       values.content = content
       values.protectTime = moment(protectTime).format('YYYY-MM-DD HH:mm:ss')
       values.remark = remark
@@ -97,13 +97,12 @@ export default class AddForm extends Component {
     })
   }
   render() {
-    const { open , row } = this.props
-    console.log(row);
-    this.state.stationId = row.stationId
+    const { open } = this.props
+    // console.log(row);
     const { userOptions, stationOptions, deviceOptions, type, stationId, stationName } = this.state
     return (
       <Drawer
-        title={`${row.id ? '修改' : '添加'}维保记录`}
+        title='维保记录'
         placement='right'
         width='70%'
         headerStyle={{ backgroundColor: '#FFF' }}
@@ -115,7 +114,7 @@ export default class AddForm extends Component {
         extra={
           <Space>
             <Button onClick={this.onClose}>取消</Button>
-            <Button type="primary" onClick={this.add}>{row.id ? '修改' : '创建'}</Button>
+            <Button type="primary" onClick={this.add}>创建</Button>
           </Space>
         }
       >
@@ -123,18 +122,18 @@ export default class AddForm extends Component {
           name="basic"
           ref={this.formRef}
           layout="vertical"
-          initialValues={{
-            title: row.title,
-            protectUser: row.ywAdminUserList,
-            stationId: row.stationId,
-            protectTarget: row.stationName,
-            type,
-            protectTime: moment(row.protectTime),
-            // content: row.content,
-            // remark: row.remark
-          }}
+        // initialValues={{
+        //   title: row.title,
+        //   protectUser: row.ywAdminUserList,
+        //   stationId: row.stationId,
+        //   protectTarget: row.stationName,
+        //   type,
+        //   protectTime: moment(row.protectTime),
+        //   // content: row.content,
+        //   // remark: row.remark
+        // }}
         >
-          <Card style={{marginBottom: 5}}>
+          <Card style={{ marginBottom: 5 }}>
             <h3>维保信息</h3>
             <Item label="维保标题" name="title"
               rules={[
@@ -151,7 +150,7 @@ export default class AddForm extends Component {
               <Select
                 mode="multiple"
                 allowClear
-                placeholder="请选择维保人员"
+                placeholder="请选择维保成员"
               >
                 {userOptions.map(item => (<Option value={item.id} key={item.id}>{item.userName}</Option>))}
               </Select>
@@ -178,9 +177,7 @@ export default class AddForm extends Component {
                         { required: true, message: '请选择维保类型' }
                       ]}
                     >
-                      <Select
-                        onChange={this.handleTypeChange}
-                      >
+                      <Select onChange={this.handleTypeChange}>
                         <Option value={0}>电站</Option>
                         <Option value={1}>设备</Option>
                         <Option value={2}>其他</Option>
@@ -191,9 +188,9 @@ export default class AddForm extends Component {
                     {
                       type === 0 && stationId ? (
                         <Item label="维保目标" name='protectTarget'
-                          // rules={[
-                          //   { required: true, message: '请选择电站' }
-                          // ]}
+                        // rules={[
+                        //   { required: true, message: '请选择电站' }
+                        // ]}
                         >
                           <Input placeholder='请选择电站' defaultValue={stationName} key={stationName} disabled />
                         </Item>
@@ -233,9 +230,9 @@ export default class AddForm extends Component {
               <DatePicker showTime format='YYYY-MM-DD HH:mm:ss' style={{ width: '24%' }} />
             </Item>
             <Item label="维保内容" name='content'
-              // rules={[
-              //   { required: true, message: '请填写维保内容' }
-              // ]}
+            rules={[
+              { required: true, message: '请填写维保内容' }
+            ]}
             >
               <RichTextEditor ref={this.contentRef} />
             </Item>

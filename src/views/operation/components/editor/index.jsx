@@ -8,7 +8,7 @@ import htmlToDraft from 'html-to-draftjs'
 export default class RichTextEditor extends Component {
   constructor(props) {
     super(props)
-    const html = props.content
+    const html = this.props.content
     if (html) {
       const contentBlock = htmlToDraft(html)
       const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks)
