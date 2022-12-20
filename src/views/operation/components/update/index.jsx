@@ -6,7 +6,7 @@ import moment from 'moment/moment'
 
 const { Item } = Form
 const { Option } = Select
-export default class AddForm extends Component {
+export default class UpdateForm extends Component {
   formRef = React.createRef()
   contentRef = React.createRef()
   remarkRef = React.createRef()
@@ -49,7 +49,7 @@ export default class AddForm extends Component {
     const content = this.contentRef.current.getDetail()
     const remark = this.contentRef.current.getDetail()
     this.formRef.current.validateFields().then(values => {
-      // console.log(values)
+      console.log(values)
       const stationName = this.state.stationOptions.find(item => stationId === item.id).stationName
       if (values.type === 0) {
         values.protectTarget = stationName
@@ -62,7 +62,7 @@ export default class AddForm extends Component {
       values.protectTarget = values.protectTarget.join(',')
       // return
       addOrUpdateOne(values).then(res => {
-        // console.log(res)
+        console.log(res)
         if (res.code === 0) {
           message.success(res.msg)
           this.setState({
@@ -97,10 +97,11 @@ export default class AddForm extends Component {
   }
   render() {
     const { open } = this.props
+    // console.log(row);
     const { userOptions, stationOptions, deviceOptions, type, stationId, stationName } = this.state
     return (
       <Drawer
-        title='添加维保记录'
+        title='修改维保记录'
         placement='right'
         width='70%'
         headerStyle={{ backgroundColor: '#FFF' }}
@@ -112,7 +113,7 @@ export default class AddForm extends Component {
         extra={
           <Space>
             <Button onClick={this.onClose}>取消</Button>
-            <Button type="primary" onClick={this.add}>创建</Button>
+            <Button type="primary" onClick={this.add}>修改</Button>
           </Space>
         }
       >
@@ -120,6 +121,16 @@ export default class AddForm extends Component {
           name="basic"
           ref={this.formRef}
           layout="vertical"
+        // initialValues={{
+        //   title: row.title,
+        //   protectUser: row.ywAdminUserList,
+        //   stationId: row.stationId,
+        //   protectTarget: row.stationName,
+        //   type,
+        //   protectTime: moment(row.protectTime),
+        //   // content: row.content,
+        //   // remark: row.remark
+        // }}
         >
           <Card style={{ marginBottom: 5 }}>
             <h3>维保信息</h3>

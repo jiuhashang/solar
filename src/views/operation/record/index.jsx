@@ -1,13 +1,17 @@
 import React, { Component } from 'react'
-import { Button, Card, Table, Tooltip } from 'antd'
+import { Button, Card, Table, Tooltip, Modal, message } from 'antd'
 import {
   EditOutlined,
-  DeleteOutlined
+  DeleteOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons'
 import AddForm from '../components/add'
+import UpdateForm from '../components/update'
 import Detail from '../components/detail'
-import { getLog } from '../../../api/operation'
+import { getLog, deleteProtectLog } from '../../../api/operation'
 import './index.less'
+
+const { confirm } = Modal
 
 export default class Record extends Component {
   state = {
@@ -15,7 +19,8 @@ export default class Record extends Component {
     pageSize: 10,
     list: [], 
     loading: false,
-    open: false, // 添加/修改 维保记录 弹框
+    open: false, // 添加 弹框
+    openUpdate: false, // 修改 弹框
     openDetail: false, // 详情 弹框
   }
 
@@ -36,14 +41,20 @@ export default class Record extends Component {
     })
   }
 
-  // 添加/修改 维保记录 弹框 开关
-  showDrawer = (row) => {
-    this.row = row
+  // 添加
+  showDrawer = () => {
     this.setState({ open: true })
   }
   closeDrawer = (status) => {
     this.setState({
       open: status
+    })
+  }
+  // 修改 
+  showUpdateDrawer = (row) => {
+    this.row = row
+    this.setState({
+      openUpdate: true
     })
   }
   // 详情
@@ -56,6 +67,20 @@ export default class Record extends Component {
   closeDetail = (status) => {
     this.setState({
       openDetail: status
+    })
+  }
+
+  // 删除
+  deleteTitle = (id) => {
+    confirm({
+      title: '确认要删除该维保记录吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: () => {
+        deleteProtectLog({id}).then(res => {
+          message.success(res.msg)
+          this.getList()
+        })
+      }
     })
   }
 
@@ -116,16 +141,16 @@ export default class Record extends Component {
         render: (row) => (
           <>
             <Tooltip title="编辑" color='black'>
-              <EditOutlined style={{ padding: '0 10px 0 10px', cursor: 'pointer' }} onClick={() => this.showDrawer(row)} />
+              <EditOutlined style={{padding: '0 10px 0 10px', cursor: 'pointer'}} onClick={() => this.showUpdateDrawer(row)} />
             </Tooltip>
             <Tooltip title="删除" color='black'>
-              <DeleteOutlined style={{ cursor: 'pointer' }} />
+              <DeleteOutlined style={{ cursor: 'pointer'}} onClick={() => this.deleteTitle(row.id)} />
             </Tooltip>
           </>
         )
       }
     ]
-    const { list, loading, open, openDetail } = this.state
+    const { list, loading, open, openUpdate, openDetail } = this.state
     const row = this.row || {}
     const detail = this.detail || {}
     return (
@@ -137,8 +162,10 @@ export default class Record extends Component {
         <Card className='record-content'>
           <Table loading={loading} rowKey='id' columns={columns} dataSource={list} scroll={{ x: 1500 }} />
         </Card>
-        {/* 添加/修改 维保记录 */}
-        <AddForm open={open} closeDrawer={this.closeDrawer} row={row} />
+        {/* 添加 */}
+        <AddForm open={open} closeDrawer={this.closeDrawer} />
+        {/* 修改 */}
+        <UpdateForm open={openUpdate} closeDrawer={this.closeUpdateDrawer} row={row} />
         {/* 详情 */}
         <Detail open={openDetail} closeDetail={this.closeDetail} detail={detail} />
       </div>

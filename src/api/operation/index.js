@@ -50,3 +50,12 @@ export function addOrUpdateOne( params ) {
   params
   )
 }
+
+// 删除维保记录
+export function deleteProtectLog(params) {
+  return request({
+    url: '/xzyw/ywStationProtectLog/deleteOne',
+    method: 'get',
+    params
+  })
+}
