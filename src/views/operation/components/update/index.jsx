@@ -17,7 +17,6 @@ export default class UpdateForm extends Component {
     deviceOptions: [],
     stationId: undefined, // 选中的电站id
     stationName: undefined, // 选中的电站名称
-    type: 0,
   }
   componentDidMount() {
     this.getAllUserList()
@@ -83,6 +82,7 @@ export default class UpdateForm extends Component {
     }, () => {
       // 获取对应电站所有设备列表
       getAllDeviceList({ stationId: value }).then(res => {
+        console.log(res)
         this.setState({
           deviceOptions: res.data
         })
@@ -96,9 +96,9 @@ export default class UpdateForm extends Component {
     })
   }
   render() {
-    const { open } = this.props
+    const { open, row } = this.props
     // console.log(row);
-    const { userOptions, stationOptions, deviceOptions, type, stationId, stationName } = this.state
+    const { userOptions, stationOptions, deviceOptions } = this.state
     return (
       <Drawer
         title='修改维保记录'
@@ -121,16 +121,18 @@ export default class UpdateForm extends Component {
           name="basic"
           ref={this.formRef}
           layout="vertical"
-        // initialValues={{
-        //   title: row.title,
-        //   protectUser: row.ywAdminUserList,
-        //   stationId: row.stationId,
-        //   protectTarget: row.stationName,
-        //   type,
-        //   protectTime: moment(row.protectTime),
-        //   // content: row.content,
-        //   // remark: row.remark
-        // }}
+          initialValues={{
+            title: row.title,
+            protectUser: row.ywAdminUserList,
+            stationId: row.stationId,
+            type: row.type,
+            station: row.protectTarget,
+            device: row.ywStationDeviceList,
+            other: row.protectTarget,
+            protectTime: moment(row.protectTime),
+            content: row.content,
+            remark: row.remark
+          }}
         >
           <Card style={{ marginBottom: 5 }}>
             <h3>维保信息</h3>
@@ -150,8 +152,9 @@ export default class UpdateForm extends Component {
                 mode="multiple"
                 allowClear
                 placeholder="请选择维保成员"
+                key='id'
               >
-                {userOptions.map(item => (<Option value={item.id} key={item.id}>{item.userName}</Option>))}
+                {userOptions && userOptions.map(item => (<Option value={item.id} key={item.id}>{item.userName}</Option>))}
               </Select>
             </Item>
             <Item label="维保电站" name="stationId"
@@ -164,63 +167,61 @@ export default class UpdateForm extends Component {
                 placeholder="请选择维保电站"
                 onChange={this.handleStationChange}
               >
-                {stationOptions.map(item => <Option value={item.id} key={item.id}>{item.stationName}</Option>)}
+                {stationOptions && stationOptions.map(item => <Option value={item.id} key={item.id}>{item.stationName}</Option>)}
               </Select>
             </Item>
-            {
-              stationId ? (
-                <Row gutter={20}>
-                  <Col span={6}>
-                    <Item label="维保类型" name='type'
+
+            <Row gutter={20}>
+              <Col span={6}>
+                <Item label="维保类型" name='type'
+                  rules={[
+                    { required: true, message: '请选择维保类型' }
+                  ]}
+                >
+                  <Select onChange={this.handleTypeChange}>
+                    <Option value={0}>电站</Option>
+                    <Option value={1}>设备</Option>
+                    <Option value={2}>其他</Option>
+                  </Select>
+                </Item>
+              </Col>
+              <Col span={18}>
+                {
+                  row.type === 0 ? (
+                    <Item label="维保目标" name='station'
                       rules={[
-                        { required: true, message: '请选择维保类型' }
+                        { required: true, message: '请选择电站' }
                       ]}
                     >
-                      <Select onChange={this.handleTypeChange}>
-                        <Option value={0}>电站</Option>
-                        <Option value={1}>设备</Option>
-                        <Option value={2}>其他</Option>
-                      </Select>
+                      <Input placeholder='请选择电站' defaultValue={row.stationName} key={row.stationName} disabled />
                     </Item>
-                  </Col>
-                  <Col span={18}>
-                    {
-                      type === 0 && stationId ? (
-                        <Item label="维保目标" name='protectTarget'
-                        // rules={[
-                        //   { required: true, message: '请选择电站' }
-                        // ]}
-                        >
-                          <Input placeholder='请选择电站' defaultValue={stationName} key={stationName} disabled />
-                        </Item>
-                      ) : type === 1 && stationId ? (
-                        <Item label="维保目标" name='protectTarget'
-                          rules={[
-                            { required: true, message: '请选择设备' }
-                          ]}
-                        >
-                          <Select
-                            mode="multiple"
-                            allowClear
-                            placeholder="请选择维保设备列表"
-                            onChange={this.handleDeviceChange}
-                          >
-                            {deviceOptions.map(item => <Option value={item.id} key={item.id}>{item.deviceName} {item.deviceSn}</Option>)}
-                          </Select>
-                        </Item>) : (
-                        <Item label="维保目标" name='protectTarget'
-                          rules={[
-                            { required: true, message: '请输入内容' }
-                          ]}
-                        >
-                          <Input placeholder='请输入相关内容' />
-                        </Item>
-                      )
-                    }
-                  </Col>
-                </Row>
-              ) : null
-            }
+                  ) : row.type === 1 ? (
+                    <Item label="维保目标" name='device'
+                      rules={[
+                        { required: true, message: '请选择设备' }
+                      ]}
+                    >
+                      <Select
+                        mode="multiple"
+                        allowClear
+                        placeholder="请选择维保设备列表"
+                        onChange={this.handleDeviceChange}
+                      >
+                        {deviceOptions && deviceOptions.map(item => <Option value={item.id} key={item.id}>{item.deviceName} {item.deviceSn}</Option>)}
+                      </Select>
+                    </Item>) : (
+                    <Item label="维保目标" name='other'
+                      rules={[
+                        { required: true, message: '请输入内容' }
+                      ]}
+                    >
+                      <Input placeholder='请输入相关内容' />
+                    </Item>
+                  )
+                }
+              </Col>
+            </Row>
+
             <Item label="维保时间" name='protectTime'
               rules={[
                 { required: true, message: '请选择维保时间' }
@@ -229,14 +230,14 @@ export default class UpdateForm extends Component {
               <DatePicker showTime format='YYYY-MM-DD HH:mm:ss' style={{ width: '24%' }} />
             </Item>
             <Item label="维保内容" name='content'
-            rules={[
-              { required: true, message: '请填写维保内容' }
-            ]}
+              rules={[
+                { required: true, message: '请填写维保内容' }
+              ]}
             >
-              <RichTextEditor ref={this.contentRef} />
+              <RichTextEditor ref={this.contentRef} editorState={row.content} />
             </Item>
             <Item label="备注" name='remark'>
-              <RichTextEditor ref={this.remarkRef} />
+              <RichTextEditor ref={this.remarkRef} editorState={row.remark} />
             </Item>
           </Card>
         </Form>

@@ -57,6 +57,11 @@ export default class Record extends Component {
       openUpdate: true
     })
   }
+  closeUpdateDrawer = (status) => {
+    this.setState({
+      openUpdate: status
+    })
+  }
   // 详情
   showDetailDrawer = (detail) => {
     this.detail = detail
